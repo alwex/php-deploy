@@ -22,6 +22,8 @@ class Config {
     private $symlink;
     private $project;
     private $currentHost;
+    private $vcs;
+    private $workingDirectory;
 
     public function __construct(Arguments $arguments) {
 
@@ -36,6 +38,8 @@ class Config {
         // loaf global config
         if ($globalConfig) {
             $this->setProject(ArrayUtil::getArrayValue($globalConfig, 'project'));
+            $this->setVcs(ArrayUtil::getArrayValue($globalConfig, 'vcs'));
+            $this->setWorkingDirectory(ArrayUtil::getArrayValue($globalConfig, 'workingDirectory'));
         }
 
         // load env specific config
@@ -119,6 +123,38 @@ GLOBAL_CONF;
                 2
             );
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWorkingDirectory()
+    {
+        return $this->workingDirectory;
+    }
+
+    /**
+     * @param mixed $workingDirectory
+     */
+    public function setWorkingDirectory($workingDirectory)
+    {
+        $this->workingDirectory = $workingDirectory;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVcs()
+    {
+        return $this->vcs;
+    }
+
+    /**
+     * @param mixed $vcs
+     */
+    public function setVcs($vcs)
+    {
+        $this->vcs = $vcs;
     }
 
     /**

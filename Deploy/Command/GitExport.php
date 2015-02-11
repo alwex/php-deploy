@@ -8,6 +8,8 @@
 namespace Deploy\Command;
 
 
+use Deploy\Util\NameUtil;
+
 class GitExport extends AbstractCommand {
 
     /**
@@ -18,5 +20,29 @@ class GitExport extends AbstractCommand {
      */
     public function run()
     {
+        $workingDir = $this->config->getWorkingDirectory();
+
+        // clean working directory
+        $command = sprintf("rm -rf %s", $workingDir);
+        $this->logger->debug($command);
+        exec($command, $this->output);
+
+        // create working directory
+        $command = sprintf("mkdir -p %s", $workingDir);
+        $this->logger->debug($command);
+        exec($command, $this->output);
+
+        $command = sprintf(
+            "cd %s && git clone %s %s && cd %s && git checkout -f refs/tags/%s",
+            $workingDir,
+            $this->config->getVcs(),
+            $this->config->getProject() . '-' . $this->arguments->getRelease(),
+            $this->config->getProject() . '-' . $this->arguments->getRelease(),
+            $this->arguments->getRelease()
+        );
+
+        $this->logger->debug($command);
+
+        exec($command, $this->output);
     }
 }

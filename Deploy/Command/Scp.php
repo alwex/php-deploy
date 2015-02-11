@@ -32,7 +32,7 @@ class Scp extends AbstractCommand {
 
         $command = sprintf(
            "scp %s %s@%s:%s",
-            $packageName,
+            $this->config->getWorkingDirectory() . '/' . $packageName,
             $this->config->getLogin(),
             $this->config->getCurrentHost(),
             $this->config->getToDirectory() . '/'

@@ -26,9 +26,10 @@ class TarGz extends AbstractCommand {
         );
 
         $command = sprintf(
-            "tar -czf %s %s",
+            "cd %s && tar -czf %s %s",
+            $this->config->getWorkingDirectory(),
             $packageName,
-            $this->config->getFromDirectory()
+            $this->config->getProject() . '-' . $this->arguments->getRelease()
         );
         $this->logger->debug($command);
 

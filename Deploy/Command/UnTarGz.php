@@ -31,11 +31,12 @@ class UnTarGz extends AbstractCommand {
         );
 
         $command = sprintf(
-            "ssh %s@%s \"tar -C %s -xzf %s\"",
+            "ssh %s@%s \"cd %s && tar -xzf %s && rm %s\"",
             $this->config->getLogin(),
             $this->config->getCurrentHost(),
-            $this->config->getToDirectory() . '/'. $directoryName,
-            $this->config->getToDirectory() . '/' .$packageName
+            $this->config->getToDirectory(),
+            $packageName,
+            $packageName
         );
 
         $this->logger->debug($command);

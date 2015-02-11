@@ -9,6 +9,7 @@ namespace Deploy\Action;
 
 
 use Deploy\Command\ComposerInstall;
+use Deploy\Command\GitExport;
 use Deploy\Command\Mkdir;
 use Deploy\Command\Rm;
 use Deploy\Command\Scp;
@@ -17,8 +18,6 @@ use Deploy\Command\TarGz;
 use Deploy\Command\UnTarGz;
 
 class Deploy extends AbstractAction {
-
-    private $packageName;
 
     /**
      * Perform every task before processing the action
@@ -34,8 +33,18 @@ class Deploy extends AbstractAction {
     protected function processing()
     {
         // pre-deploy
+        // git clone
         // composer install etc ...
         $this->logger->addInfo("pre deploy");
+
+        // git clone
+        $gitExportCommand = new GitExport(
+            $this->config,
+            $this->arguments,
+            $this->logger
+        );
+        $gitExportCommand->runCommand();
+
         $composerCommand = new ComposerInstall(
             $this->config,
             $this->arguments,
@@ -58,15 +67,6 @@ class Deploy extends AbstractAction {
 
             $this->config->setCurrentHost($host);
 
-            // create TO directory
-            $this->logger->addInfo("create distant directory");
-            $mkdirCommand = new Mkdir(
-                $this->config,
-                $this->arguments,
-                $this->logger
-            );
-            $mkdirCommand->runCommand();
-
             // upload package
             $this->logger->addInfo("upload package");
             $scpCommand = new Scp(
@@ -86,13 +86,6 @@ class Deploy extends AbstractAction {
         // on-deploy
         // on each host after code has been copied
         $this->logger->addInfo("post deploy");
-
-        $rmCommand = new Rm(
-            $this->config,
-            $this->arguments,
-            $this->logger
-        );
-        $rmCommand->runCommand();
 
         foreach ($this->config->getHosts() as $host) {
 
