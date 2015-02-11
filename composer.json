@@ -1,0 +1,20 @@
+{
+    "name": "alwex/phpdeploy",
+    "description": "full php deployment tool to automate code deployment on multiple hosts/env",
+    "require": {
+        "monolog/monolog": "~1.12"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "authors": [
+        {
+            "name": "Alexandre GUIDET",
+            "email": "alwex@free.fr"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {"Deploy\\": "Deploy/"}
+    }
+}
