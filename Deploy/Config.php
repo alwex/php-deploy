@@ -104,7 +104,8 @@ EXAMPLE;
             touch($this->configurationPath);
             $globalConfiguration =<<<GLOBAL_CONF
 project = $project
-vcs=http://localhost/project.git
+vcs=https://github.com/alwex/$project.git
+workingDirectory=/tmp/php-deploy
 GLOBAL_CONF;
             file_put_contents($this->configurationPath .'/config.ini', $globalConfiguration);
 
