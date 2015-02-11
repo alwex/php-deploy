@@ -88,13 +88,14 @@ hosts[] = 'localhost'
 symlink = current
 EXAMPLE;
 
-            file_put_contents($exampleFile, $this->envDirectory . '/template/example.ini');
+            file_put_contents($this->envDirectory . '/template/example.ini', $exampleFile);
 
             touch($this->configurationPath);
             $globalConfiguration =<<<GLOBAL_CONF
-project = test
+project = $project
+vcs=http://localhost/project.git
 GLOBAL_CONF;
-            file_put_contents($exampleFile, $this->configurationPath .'/config.ini');
+            file_put_contents($this->configurationPath .'/config.ini', $globalConfiguration);
 
         }
 
