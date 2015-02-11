@@ -71,6 +71,13 @@ class Config {
                 )
             );
 
+            exec(
+                sprintf(
+                    "mkdir -p %s",
+                    $this->envDirectory . '/template'
+                )
+            );
+
             touch($this->envDirectory . '/template/example.ini');
             $exampleFile = <<<EXAMPLE
 [user]
