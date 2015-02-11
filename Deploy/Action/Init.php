@@ -8,6 +8,8 @@
 namespace Deploy\Action;
 
 
+use Deploy\Arguments;
+
 class Init extends AbstractAction {
 
     /**
@@ -26,6 +28,10 @@ class Init extends AbstractAction {
      */
     protected function processing()
     {
+        if ($this->arguments->getTo() == null || $this->arguments->getProject() == null) {
+            throw new \RuntimeException("parameter 'to' and 'project' are mandatory");
+        }
+
         $this->logger->info(sprintf(
             "processing initialization of project %s",
             $this->arguments->getProject()
@@ -36,7 +42,7 @@ class Init extends AbstractAction {
             $this->arguments->getTo()
         ));
 
-        $this->config->init($this->arguments->getTo());
+        $this->config->init($this->arguments);
     }
 
     /**

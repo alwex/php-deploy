@@ -105,7 +105,7 @@ class Console {
         $arguments->setRelease(ArrayUtil::getArrayValue($options, Arguments::PARAM_RELEASE));
         $arguments->setProject(ArrayUtil::getArrayValue($options, Arguments::PARAM_PROJECT));
 
-        $config = new Config($arguments->getTo());
+        $config = new Config($arguments);
 
         $this->arguments = $arguments;
         $this->config = $config;

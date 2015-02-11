@@ -8,10 +8,12 @@
 namespace Deploy;
 
 use Deploy\Util\ArrayUtil;
+use phpDocumentor\Reflection\DocBlock\Tag\ExampleTag;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Config {
 
+    private $configurationPath;
     private $hosts = array();
     private $fromDirectory;
     private $toDirectory;
@@ -21,12 +23,15 @@ class Config {
     private $project;
     private $currentHost;
 
-    public function __construct($env) {
+    public function __construct(Arguments $arguments) {
 
-        $this->envDirectory = getcwd() . '/.php-deploy/environments/';
+        $env = $arguments->getTo();
+
+        $this->configurationPath = getcwd() . '/.php-deploy';
+        $this->envDirectory = $this->configurationPath . '/environments/';
 
         @$envConfig = parse_ini_file($this->envDirectory . $env . '.ini');
-        @$globalConfig = parse_ini_file(getcwd() . '/.php-deploy/config.ini');
+        @$globalConfig = parse_ini_file($this->configurationPath . '/config.ini');
 
         // loaf global config
         if ($globalConfig) {
@@ -46,7 +51,53 @@ class Config {
     /**
      * @param $env
      */
-    public function init($env) {
+    public function init(Arguments $arguments) {
+
+        $env = $arguments->getTo();
+        $project = $arguments->getProject();
+
+        if (!is_dir($this->configurationPath)) {
+            exec(
+                sprintf(
+                    "mkdir -p %s",
+                    $this->configurationPath
+                )
+            );
+
+            exec(
+                sprintf(
+                    "mkdir -p %s",
+                    $this->envDirectory
+                )
+            );
+
+            touch($this->envDirectory . '/template/example.ini');
+            $exampleFile = <<<EXAMPLE
+[user]
+login=sshuser
+
+[deployment]
+fromDirectory = ./
+toDirectory = /tmp/monrep
+
+hosts[] = 'localhost'
+hosts[] = 'localhost'
+hosts[] = 'localhost'
+hosts[] = 'localhost'
+
+symlink = current
+EXAMPLE;
+
+            file_put_contents($exampleFile, $this->envDirectory . '/template/example.ini');
+
+            touch($this->configurationPath);
+            $globalConfiguration =<<<GLOBAL_CONF
+project = test
+GLOBAL_CONF;
+            file_put_contents($exampleFile, $this->configurationPath .'/config.ini');
+
+        }
+
         if (!file_exists($this->envDirectory . $env . '.ini')) {
             // generate the default env configuration file
             touch($this->envDirectory . $env . '.ini');
@@ -60,6 +111,22 @@ class Config {
                 2
             );
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getConfigurationPath()
+    {
+        return $this->configurationPath;
+    }
+
+    /**
+     * @param string $configurationPath
+     */
+    public function setConfigurationPath($configurationPath)
+    {
+        $this->configurationPath = $configurationPath;
     }
 
     /**
