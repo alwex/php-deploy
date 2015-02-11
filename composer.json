@@ -16,5 +16,8 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {"Deploy\\": "Deploy/"}
-    }
+    },
+    "bin": [
+        "bin/pdeploy"
+    ]
 }
