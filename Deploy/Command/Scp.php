@@ -35,7 +35,7 @@ class Scp extends AbstractCommand {
             $this->config->getWorkingDirectory() . '/' . $packageName,
             $this->config->getLogin(),
             $this->config->getCurrentHost(),
-            $this->config->getToDirectory() . '/'
+            $this->config->getToDirectory()
         );
 
         $this->logger->debug($command);
