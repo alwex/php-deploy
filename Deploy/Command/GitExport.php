@@ -8,8 +8,6 @@
 namespace Deploy\Command;
 
 
-use Deploy\Util\NameUtil;
-
 class GitExport extends AbstractCommand {
 
     /**

@@ -8,6 +8,7 @@
 namespace Deploy\Action;
 
 
+use Deploy\Command\CommandFactory;
 use Deploy\Command\ComposerInstall;
 use Deploy\Command\GitExport;
 use Deploy\Command\Mkdir;
@@ -37,29 +38,16 @@ class Deploy extends AbstractAction {
         // composer install etc ...
         $this->logger->addInfo("pre deploy");
 
-        // git clone
-        $gitExportCommand = new GitExport(
-            $this->config,
-            $this->arguments,
-            $this->logger
-        );
-        $gitExportCommand->runCommand();
+        foreach ($this->config->getPreDeployCommands() as $commandName) {
+            $command = CommandFactory::create(
+                $commandName,
+                $this->config,
+                $this->arguments,
+                $this->logger
+            );
 
-        $composerCommand = new ComposerInstall(
-            $this->config,
-            $this->arguments,
-            $this->logger
-        );
-        $composerCommand->runCommand();
-
-        // create package
-        $this->logger->addInfo("create package");
-        $tarGzCommand = new TarGz(
-            $this->config,
-            $this->arguments,
-            $this->logger
-        );
-        $tarGzCommand->runCommand();
+            $command->runCommand();
+        }
 
         $this->logger->addInfo("on deploy");
         // deployment phase on each host
@@ -67,37 +55,36 @@ class Deploy extends AbstractAction {
 
             $this->config->setCurrentHost($host);
 
-            // upload package
-            $this->logger->addInfo("upload package");
-            $scpCommand = new Scp(
-                $this->config,
-                $this->arguments,
-                $this->logger
-            );
-            $scpCommand->runCommand();
+            foreach ($this->config->getOnDeployCommands() as $commandName) {
+                $command = CommandFactory::create(
+                    $commandName,
+                    $this->config,
+                    $this->arguments,
+                    $this->logger
+                );
 
-            $unTarGzCommand = new UnTarGz(
-                $this->config,
-                $this->arguments,
-                $this->logger
-            );
-            $unTarGzCommand->runCommand();
+                $command->runCommand();
+            }
         }
+
         // on-deploy
         // on each host after code has been copied
         $this->logger->addInfo("post deploy");
 
-        foreach ($this->config->getHosts() as $host) {
+        foreach($this->config->getPostDeployCommands() as $commandName) {
+            foreach ($this->config->getHosts() as $host) {
 
-            $this->config->setCurrentHost($host);
+                $command = CommandFactory::create(
+                    $commandName,
+                    $this->config,
+                    $this->arguments,
+                    $this->logger
+                );
 
-            $symlinkCommand = new Symlink(
-                $this->config,
-                $this->arguments,
-                $this->logger
-            );
-            $symlinkCommand->runCommand();
+                $command->runCommand();
+            }
         }
+
 
         // post-release
         // on each host after release has been activated

@@ -10,6 +10,7 @@ namespace Deploy\Action;
 use Deploy\Config;
 use Deploy\Arguments;
 use Monolog\Logger;
+use Deploy\Command;
 
 class ActionFactory {
 

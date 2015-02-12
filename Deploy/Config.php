@@ -24,6 +24,9 @@ class Config {
     private $currentHost;
     private $vcs;
     private $workingDirectory;
+    private $preDeployCommands;
+    private $onDeployCommands;
+    private $postDeployCommands;
 
     public function __construct(Arguments $arguments) {
 
@@ -49,6 +52,10 @@ class Config {
             $this->setToDirectory(ArrayUtil::getArrayValue($envConfig, 'toDirectory'));
             $this->setSymlink(ArrayUtil::getArrayValue($envConfig, 'symlink'));
             $this->setHosts(ArrayUtil::getArrayValue($envConfig, 'hosts'));
+
+            $this->setPreDeployCommands(ArrayUtil::getArrayValue($envConfig, 'preDeploy'));
+            $this->setOnDeployCommands(ArrayUtil::getArrayValue($envConfig, 'onDeploy'));
+            $this->setPostDeployCommands(ArrayUtil::getArrayValue($envConfig, 'postDeploy'));
         }
     }
 
@@ -71,6 +78,13 @@ class Config {
             exec(
                 sprintf(
                     "mkdir -p %s",
+                    $this->configurationPath . '/Command'
+                )
+            );
+
+            exec(
+                sprintf(
+                    "mkdir -p %s",
                     $this->envDirectory
                 )
             );
@@ -85,7 +99,7 @@ class Config {
             touch($this->envDirectory . '/template/example.ini');
             $exampleFile = <<<EXAMPLE
 [user]
-login=sshuser
+login=aguidet
 
 [deployment]
 fromDirectory = ./
@@ -93,10 +107,18 @@ toDirectory = /tmp/monrep
 
 hosts[] = 'localhost'
 hosts[] = 'localhost'
-hosts[] = 'localhost'
-hosts[] = 'localhost'
 
 symlink = current
+
+[command]
+preDeploy[] = Deploy\Command\GitExport
+preDeploy[] = Deploy\Command\ComposerInstall
+preDeploy[] = Deploy\Command\TarGz
+
+onDeploy[] = Deploy\Command\Scp
+onDeploy[] = Deploy\Command\UnTarGz
+
+postDeploy[] = Deploy\Command\Symlink
 EXAMPLE;
 
             file_put_contents($this->envDirectory . '/template/example.ini', $exampleFile);
@@ -104,12 +126,39 @@ EXAMPLE;
             touch($this->configurationPath);
             $globalConfiguration =<<<GLOBAL_CONF
 project = $project
-vcs=https://github.com/alwex/$project.git
+vcs=https://github.com/$project.git
 workingDirectory=/tmp/php-deploy
 GLOBAL_CONF;
-            file_put_contents($this->configurationPath .'/config.ini', $globalConfiguration);
+            file_put_contents($this->configurationPath . '/config.ini', $globalConfiguration);
 
+
+            $exampleCommand =<<<'EXAMPLE_COMMAND'
+<?php
+
+class Ls extends \Deploy\Command\AbstractCommand {
+
+    /**
+     * execute command and php tasks
+     * return the execution status as an integer
+     *
+     * @return int
+     */
+    public function run()
+    {
+        $command = sprintf(
+            "cd %s && ls -l",
+            $this->config->getFromDirectory()
+        );
+
+        exec($command, $this->output);
+    }
+}
+EXAMPLE_COMMAND;
+
+            touch($this->configurationPath . '/Command/Ls.php');
+            file_put_contents($this->configurationPath . '/Command/Ls.php', $exampleCommand);
         }
+
 
         if (!file_exists($this->envDirectory . $env . '.ini')) {
             // generate the default env configuration file
@@ -124,6 +173,54 @@ GLOBAL_CONF;
                 2
             );
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPreDeployCommands()
+    {
+        return $this->preDeployCommands;
+    }
+
+    /**
+     * @param mixed $preDeployCommands
+     */
+    public function setPreDeployCommands($preDeployCommands)
+    {
+        $this->preDeployCommands = $preDeployCommands;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOnDeployCommands()
+    {
+        return $this->onDeployCommands;
+    }
+
+    /**
+     * @param mixed $onDeployCommands
+     */
+    public function setOnDeployCommands($onDeployCommands)
+    {
+        $this->onDeployCommands = $onDeployCommands;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPostDeployCommands()
+    {
+        return $this->postDeployCommands;
+    }
+
+    /**
+     * @param mixed $postDeployCommands
+     */
+    public function setPostDeployCommands($postDeployCommands)
+    {
+        $this->postDeployCommands = $postDeployCommands;
     }
 
     /**
