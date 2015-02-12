@@ -8,6 +8,7 @@
 namespace Deploy;
 
 use Deploy\Util\ArrayUtil;
+use Deploy\Util\NameUtil;
 use phpDocumentor\Reflection\DocBlock\Tag\ExampleTag;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
@@ -27,6 +28,7 @@ class Config {
     private $preDeployCommands;
     private $onDeployCommands;
     private $postDeployCommands;
+    private $packageName;
 
     public function __construct(Arguments $arguments) {
 
@@ -57,6 +59,24 @@ class Config {
             $this->setOnDeployCommands(ArrayUtil::getArrayValue($envConfig, 'onDeploy'));
             $this->setPostDeployCommands(ArrayUtil::getArrayValue($envConfig, 'postDeploy'));
         }
+
+        $this->setPackageName(NameUtil::generatePackageName($this, $arguments));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPackageName()
+    {
+        return $this->packageName;
+    }
+
+    /**
+     * @param mixed $packageName
+     */
+    public function setPackageName($packageName)
+    {
+        $this->packageName = $packageName;
     }
 
     /**
