@@ -74,6 +74,8 @@ class Deploy extends AbstractAction {
         foreach($this->config->getPostDeployCommands() as $commandName) {
             foreach ($this->config->getHosts() as $host) {
 
+                $this->config->setCurrentHost($host);
+
                 $command = CommandFactory::create(
                     $commandName,
                     $this->config,
