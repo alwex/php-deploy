@@ -1,5 +1,10 @@
 #!/usr/bin/env php
 <?php
+/**
+ * User: aguidet
+ * Date: 13/02/15
+ * Time: 09:47
+ */
 
 if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
@@ -7,7 +12,10 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../../../autoload.php';
 }
 
-use Deploy\Console;
+use Symfony\Component\Console\Application;
 
-$console = new Console();
-$console->run($argv);
+$application = new Application();
+$application->add(new \Deploy\Action\ActionInit());
+$application->add(new \Deploy\Action\ActionAddEnv());
+$application->add(new \Deploy\Action\ActionExecute());
+$application->run();

@@ -2,7 +2,8 @@
     "name": "alwex/phpdeploy",
     "description": "full php deployment tool to automate code deployment on multiple hosts/env",
     "require": {
-        "monolog/monolog": "~1.12"
+        "monolog/monolog": "~1.12",
+        "symfony/console": "~2.6"
     },
     "require-dev": {
         "phpunit/phpunit": "*"

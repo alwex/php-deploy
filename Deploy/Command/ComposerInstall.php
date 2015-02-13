@@ -7,9 +7,6 @@
 
 namespace Deploy\Command;
 
-
-use Deploy\Util\NameUtil;
-
 class ComposerInstall extends AbstractCommand {
 
     /**
@@ -20,12 +17,10 @@ class ComposerInstall extends AbstractCommand {
      */
     public function run()
     {
-
         $command = sprintf(
             "cd %s && composer install",
-            $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->arguments->getRelease()
+            $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->input->getOption('release')
         );
-
-        exec($command, $this->output);
+        $this->shellExec($command);
     }
 }

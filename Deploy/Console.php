@@ -22,6 +22,7 @@ class Console {
     );
 
     private $params = array(
+        'action:',
         'to:',
         'release:',
         'project:',

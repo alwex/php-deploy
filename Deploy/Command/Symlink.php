@@ -20,10 +20,13 @@ class Symlink extends AbstractCommand {
      */
     public function run()
     {
-        $directoryName = NameUtil::generateDirectoryName($this->config, $this->arguments);
+        $directoryName = NameUtil::generateDirectoryName(
+            $this->config,
+            $this->input
+        );
 
         $command = sprintf(
-            "ssh %s@%s \"rm %s ; sudo ln -s %s %s\"",
+            "ssh %s@%s \"rm %s ; ln -s %s %s\"",
             $this->config->getLogin(),
             $this->config->getCurrentHost(),
             // rm previous link
@@ -33,7 +36,6 @@ class Symlink extends AbstractCommand {
             $this->config->getToDirectory() . '/' . $this->config->getSymlink()
         );
 
-        $this->logger->debug($command);
-        exec($command, $this->output);
+        $this->shellExec($command);
     }
 }

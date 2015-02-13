@@ -10,6 +10,7 @@ namespace Deploy;
 use Deploy\Util\ArrayUtil;
 use Deploy\Util\NameUtil;
 use phpDocumentor\Reflection\DocBlock\Tag\ExampleTag;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Yaml\Exception\RuntimeException;
 
 class Config {
@@ -25,42 +26,68 @@ class Config {
     private $currentHost;
     private $vcs;
     private $workingDirectory;
-    private $preDeployCommands;
-    private $onDeployCommands;
-    private $postDeployCommands;
+    private $preTaskCommands;
+    private $onTaskCommands;
+    private $postTaskCommands;
+    private $afterTaskCommands;
     private $packageName;
 
-    public function __construct(Arguments $arguments) {
+    /**
+     * @param InputInterface $input
+     * @return Config
+     */
+    public static function load(InputInterface $input) {
+        $env = $input->getOption('env');
+        $configurationPath = getcwd() . '/.php-deploy';
+        $envPath = $configurationPath . '/environments';
 
-        $env = $arguments->getTo();
+        @$envConfig = parse_ini_file($envPath . '/' . $env . '.ini', true);
+        @$globalConfig = parse_ini_file($configurationPath . '/config.ini');
 
-        $this->configurationPath = getcwd() . '/.php-deploy';
-        $this->envDirectory = $this->configurationPath . '/environments/';
+        $configuration = new Config();
 
-        @$envConfig = parse_ini_file($this->envDirectory . $env . '.ini');
-        @$globalConfig = parse_ini_file($this->configurationPath . '/config.ini');
+        $task = $input->getArgument('task');
 
-        // loaf global config
+        // load global config
         if ($globalConfig) {
-            $this->setProject(ArrayUtil::getArrayValue($globalConfig, 'project'));
-            $this->setVcs(ArrayUtil::getArrayValue($globalConfig, 'vcs'));
-            $this->setWorkingDirectory(ArrayUtil::getArrayValue($globalConfig, 'workingDirectory'));
+            $configuration->setProject(ArrayUtil::getArrayValue($globalConfig, 'project'));
+            $configuration->setVcs(ArrayUtil::getArrayValue($globalConfig, 'vcs'));
+            $configuration->setWorkingDirectory(ArrayUtil::getArrayValue($globalConfig, 'workingDirectory'));
         }
 
         // load env specific config
         if ($envConfig) {
-            $this->setLogin(ArrayUtil::getArrayValue($envConfig, 'login'));
-            $this->setFromDirectory(ArrayUtil::getArrayValue($envConfig, 'fromDirectory'));
-            $this->setToDirectory(ArrayUtil::getArrayValue($envConfig, 'toDirectory'));
-            $this->setSymlink(ArrayUtil::getArrayValue($envConfig, 'symlink'));
-            $this->setHosts(ArrayUtil::getArrayValue($envConfig, 'hosts'));
+            $configuration->setLogin(ArrayUtil::getArrayValue($envConfig, 'login'));
+            $configuration->setFromDirectory(ArrayUtil::getArrayValue($envConfig, 'fromDirectory'));
+            $configuration->setToDirectory(ArrayUtil::getArrayValue($envConfig, 'toDirectory'));
+            $configuration->setSymlink(ArrayUtil::getArrayValue($envConfig, 'symlink'));
+            $configuration->setHosts(ArrayUtil::getArrayValue($envConfig, 'hosts', array()));
 
-            $this->setPreDeployCommands(ArrayUtil::getArrayValue($envConfig, 'preDeploy'));
-            $this->setOnDeployCommands(ArrayUtil::getArrayValue($envConfig, 'onDeploy'));
-            $this->setPostDeployCommands(ArrayUtil::getArrayValue($envConfig, 'postDeploy'));
+            $configuration->setPreTaskCommands(ArrayUtil::getArrayValue($envConfig[$task], 'preTask', array()));
+            $configuration->setOnTaskCommands(ArrayUtil::getArrayValue($envConfig[$task], 'onTask', array()));
+            $configuration->setPostTaskCommands(ArrayUtil::getArrayValue($envConfig[$task], 'postTask', array()));
+            $configuration->setAfterTaskCommands(ArrayUtil::getArrayValue($envConfig[$task], 'afterTask', array()));
         }
 
-        $this->setPackageName(NameUtil::generatePackageName($this, $arguments));
+//        $configuration->setPackageName(NameUtil::generatePackageName($configuration, $arguments));
+
+        return $configuration;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAfterTaskCommands()
+    {
+        return $this->afterTaskCommands;
+    }
+
+    /**
+     * @param mixed $afterTaskCommands
+     */
+    public function setAfterTaskCommands($afterTaskCommands)
+    {
+        $this->afterTaskCommands = $afterTaskCommands;
     }
 
     /**
@@ -80,167 +107,51 @@ class Config {
     }
 
     /**
-     * @param $env
+     * @return mixed
      */
-    public function init(Arguments $arguments) {
-
-        $env = $arguments->getTo();
-        $project = $arguments->getProject();
-
-        if (!is_dir($this->configurationPath)) {
-            exec(
-                sprintf(
-                    "mkdir -p %s",
-                    $this->configurationPath
-                )
-            );
-
-            exec(
-                sprintf(
-                    "mkdir -p %s",
-                    $this->configurationPath . '/Command'
-                )
-            );
-
-            exec(
-                sprintf(
-                    "mkdir -p %s",
-                    $this->envDirectory
-                )
-            );
-
-            exec(
-                sprintf(
-                    "mkdir -p %s",
-                    $this->envDirectory . '/template'
-                )
-            );
-
-            touch($this->envDirectory . '/template/example.ini');
-            $exampleFile = <<<EXAMPLE
-[user]
-login=aguidet
-
-[deployment]
-fromDirectory = ./
-toDirectory = /tmp/monrep
-
-hosts[] = 'localhost'
-hosts[] = 'localhost'
-
-symlink = current
-
-[command]
-preDeploy[] = Deploy\Command\GitExport
-preDeploy[] = Deploy\Command\ComposerInstall
-preDeploy[] = Deploy\Command\TarGz
-
-onDeploy[] = Deploy\Command\Scp
-onDeploy[] = Deploy\Command\UnTarGz
-
-postDeploy[] = Deploy\Command\Symlink
-EXAMPLE;
-
-            file_put_contents($this->envDirectory . '/template/example.ini', $exampleFile);
-
-            touch($this->configurationPath);
-            $globalConfiguration =<<<GLOBAL_CONF
-project = $project
-vcs=https://github.com/$project.git
-workingDirectory=/tmp/php-deploy
-GLOBAL_CONF;
-            file_put_contents($this->configurationPath . '/config.ini', $globalConfiguration);
-
-
-            $exampleCommand =<<<'EXAMPLE_COMMAND'
-<?php
-
-class Ls extends \Deploy\Command\AbstractCommand {
+    public function getPreTaskCommands()
+    {
+        return $this->preTaskCommands;
+    }
 
     /**
-     * execute command and php tasks
-     * return the execution status as an integer
-     *
-     * @return int
+     * @param mixed $preTaskCommands
      */
-    public function run()
+    public function setPreTaskCommands($preTaskCommands)
     {
-        $command = sprintf(
-            "cd %s && ls -l",
-            $this->config->getFromDirectory()
-        );
-
-        exec($command, $this->output);
-    }
-}
-EXAMPLE_COMMAND;
-
-            touch($this->configurationPath . '/Command/Ls.php');
-            file_put_contents($this->configurationPath . '/Command/Ls.php', $exampleCommand);
-        }
-
-
-        if (!file_exists($this->envDirectory . $env . '.ini')) {
-            // generate the default env configuration file
-            touch($this->envDirectory . $env . '.ini');
-            file_put_contents(
-                $this->envDirectory . $env . '.ini',
-                file_get_contents($this->envDirectory . 'template/example.ini')
-            );
-        } else {
-            throw new RuntimeException(
-                sprintf("configuration file for environment %s already exists", $env),
-                2
-            );
-        }
+        $this->preTaskCommands = $preTaskCommands;
     }
 
     /**
      * @return mixed
      */
-    public function getPreDeployCommands()
+    public function getOnTaskCommands()
     {
-        return $this->preDeployCommands;
+        return $this->onTaskCommands;
     }
 
     /**
-     * @param mixed $preDeployCommands
+     * @param mixed $onTaskCommands
      */
-    public function setPreDeployCommands($preDeployCommands)
+    public function setOnTaskCommands($onTaskCommands)
     {
-        $this->preDeployCommands = $preDeployCommands;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getOnDeployCommands()
-    {
-        return $this->onDeployCommands;
-    }
-
-    /**
-     * @param mixed $onDeployCommands
-     */
-    public function setOnDeployCommands($onDeployCommands)
-    {
-        $this->onDeployCommands = $onDeployCommands;
+        $this->onTaskCommands = $onTaskCommands;
     }
 
     /**
      * @return mixed
      */
-    public function getPostDeployCommands()
+    public function getPostTaskCommands()
     {
-        return $this->postDeployCommands;
+        return $this->postTaskCommands;
     }
 
     /**
-     * @param mixed $postDeployCommands
+     * @param mixed $postTaskCommands
      */
-    public function setPostDeployCommands($postDeployCommands)
+    public function setPostTaskCommands($postTaskCommands)
     {
-        $this->postDeployCommands = $postDeployCommands;
+        $this->postTaskCommands = $postTaskCommands;
     }
 
     /**

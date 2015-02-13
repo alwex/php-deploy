@@ -10,17 +10,18 @@ namespace Deploy\Util;
 
 use Deploy\Arguments;
 use Deploy\Config;
+use Symfony\Component\Console\Input\InputInterface;
 
 class NameUtil {
 
-    public static function generatePackageName(Config $config, Arguments $arguments) {
-        return self::generateDirectoryName($config, $arguments)
+    public static function generatePackageName(Config $config, InputInterface $input) {
+        return self::generateDirectoryName($config, $input)
         . '.tar.gz';
     }
 
-    public static function generateDirectoryName(Config $config, Arguments $arguments) {
+    public static function generateDirectoryName(Config $config, InputInterface $input) {
         return $config->getProject()
         . '-'
-        . $arguments->getRelease();
+        . $input->getOption('release');
     }
 }

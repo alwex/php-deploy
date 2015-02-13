@@ -22,12 +22,12 @@ class Scp extends AbstractCommand {
     {
         $packageName = NameUtil::generatePackageName(
             $this->config,
-            $this->arguments
+            $this->input
         );
 
         $directoryName = NameUtil::generateDirectoryName(
             $this->config,
-            $this->arguments
+            $this->input
         );
 
         $command = sprintf(
@@ -38,8 +38,6 @@ class Scp extends AbstractCommand {
             $this->config->getToDirectory()
         );
 
-        $this->logger->debug($command);
-
-        exec($command, $this->output);
+        $this->shellExec($command);
     }
 }

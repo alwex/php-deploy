@@ -22,12 +22,12 @@ class UnTarGz extends AbstractCommand {
     {
         $packageName = NameUtil::generatePackageName(
             $this->config,
-            $this->arguments
+            $this->input
         );
 
         $directoryName = NameUtil::generateDirectoryName(
             $this->config,
-            $this->arguments
+            $this->input
         );
 
         $command = sprintf(
@@ -39,7 +39,6 @@ class UnTarGz extends AbstractCommand {
             $packageName
         );
 
-        $this->logger->debug($command);
-        exec($command, $this->output);
+        $this->shellExec($command);
     }
 }

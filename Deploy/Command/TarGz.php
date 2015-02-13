@@ -22,17 +22,21 @@ class TarGz extends AbstractCommand {
     {
         $packageName = NameUtil::generatePackageName(
             $this->config,
-            $this->arguments
+            $this->input
+        );
+
+        $directoryName = NameUtil::generateDirectoryName(
+            $this->config,
+            $this->input
         );
 
         $command = sprintf(
             "cd %s && tar -czf %s %s",
             $this->config->getWorkingDirectory(),
             $packageName,
-            $this->config->getProject() . '-' . $this->arguments->getRelease()
+            $directoryName
         );
-        $this->logger->debug($command);
 
-        exec($command, $this->output);
+        $this->shellExec($command);
     }
 }

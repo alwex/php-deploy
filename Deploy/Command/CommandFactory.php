@@ -12,6 +12,10 @@ use Deploy\Arguments;
 use Deploy\Config;
 use Monolog\Logger;
 use Deploy\Command;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class CommandFactory {
 
@@ -22,14 +26,14 @@ class CommandFactory {
      * @param Logger $logger
      * @return AbstractCommand
      */
-    public static function create($commandName, Config $config, Arguments $arguments, Logger $logger) {
+    public static function create($commandName, Config $config, InputInterface $input, OutputInterface $output) {
 
         if (!class_exists($commandName)) {
             // require the good file
             require_once getcwd() . '/.php-deploy/Command/' . $commandName . '.php';
         }
 
-        return new $commandName($config, $arguments, $logger);
+        return new $commandName($config, $input, $output);
     }
 
 }

@@ -1,14 +1,10 @@
 <?php
 /**
- * User: aguidet
- * Date: 11/02/15
- * Time: 11:43
+ * Example Command
  */
 
-namespace Deploy\Command;
 
-
-class GitExport extends AbstractCommand {
+class ExampleCommand extends AbstractCommand {
 
     /**
      * execute command and php tasks

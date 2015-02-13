@@ -10,45 +10,39 @@ namespace Deploy\Command;
 use Deploy\Arguments;
 use Deploy\Config;
 use Monolog\Logger;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class AbstractCommand {
 
     /**
-     * @var Logger
+     * @var OutputInterface
      */
-    protected $logger;
+    protected $output;
 
     /**
-     * @var Arguments
+     * @var InputInterface
      */
-    protected $arguments;
+    protected $input;
 
     /**
      * @var Config
      */
     protected $config;
 
-    protected $output = array();
+    protected $commandOutput;
 
-    public function __construct(Config $config, Arguments $arguments, Logger $logger) {
-        $this->logger = $logger;
+    public function __construct(Config $config, InputInterface $input, OutputInterface $output) {
+        $this->input = $input;
+        $this->output = $output;
         $this->config = $config;
-        $this->arguments = $arguments;
+        $this->commandOutput = array();
     }
 
     public function runCommand() {
         $this->run();
-        $this->processOutput();
-    }
-
-    /**
-     * process command output to show it to the user
-     * or to log it
-     */
-    private function processOutput() {
-        foreach ($this->output as $line) {
-            $this->logger->info($line);
-        }
     }
 
     /**
@@ -58,5 +52,14 @@ abstract class AbstractCommand {
      * @return int
      */
     public abstract function run();
+
+    protected function shellExec($command) {
+        $this->output->writeln("<comment>$command</comment>");
+        exec($command, $this->commandOutput);
+
+        foreach ($this->commandOutput as $line) {
+            $this->output->writeln($line);
+        }
+    }
 
 }

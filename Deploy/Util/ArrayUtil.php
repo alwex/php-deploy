@@ -9,8 +9,8 @@ namespace Deploy\Util;
 
 class ArrayUtil {
 
-    public static function getArrayValue(array $array, $key) {
-        return isset($array[$key]) ? $array[$key] : null;
+    public static function getArrayValue(array $array, $key, $default=null) {
+        return isset($array[$key]) ? $array[$key] : $default;
     }
 
 }
