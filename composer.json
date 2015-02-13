@@ -3,7 +3,7 @@
     "description": "full php deployment tool to automate code deployment on multiple hosts/env",
     "require": {
         "monolog/monolog": "~1.12",
-        "symfony/console": "~2.6"
+        "symfony/console": "~2"
     },
     "require-dev": {
         "phpunit/phpunit": "*"
