@@ -44,30 +44,28 @@ class ActionExecute extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configuration = Config::load($input);
-        $taskName = $input->getArgument('task');
 
-        $output->writeln("<info>before $taskName</info>");
+        if ($input->getOption('release') == null) {
 
-        foreach ($configuration->getPreTaskCommands() as $commandName) {
-            $command = CommandFactory::create(
-                $commandName,
-                $configuration,
-                $input,
-                $output
-            );
+            $output->writeln("<error>release option is mandatory</error>");
 
-            $command->runCommand();
-        }
+        } else if ($input->getOption('env') == null) {
 
-        $output->writeln("<info>on $taskName</info>");
+            $output->writeln("<error>env option is mandatory</error>");
 
-        // deployment phase on each host
-        foreach ($configuration->getHosts() as $host) {
+        } else if (!file_exists(getcwd() . '/.php-deploy/environments/' . $input->getOption('env') . '.ini')) {
 
-            $configuration->setCurrentHost($host);
+            $output->writeln("<error>env {$input->getOption('env')} does not exists</error>");
 
-            foreach ($configuration->getOnTaskCommands() as $commandName) {
+        } else {
+
+
+            $configuration = Config::load($input);
+            $taskName = $input->getArgument('task');
+
+            $output->writeln("<info>before $taskName</info>");
+
+            foreach ($configuration->getPreTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
                     $commandName,
                     $configuration,
@@ -77,17 +75,51 @@ class ActionExecute extends Command {
 
                 $command->runCommand();
             }
-        }
 
-        // on-deploy
-        // on each host after code has been copied
-        $output->writeln("<info>post $taskName</info>");
+            $output->writeln("<info>on $taskName</info>");
 
-        foreach($configuration->getPostTaskCommands() as $commandName) {
+            // deployment phase on each host
             foreach ($configuration->getHosts() as $host) {
 
                 $configuration->setCurrentHost($host);
 
+                foreach ($configuration->getOnTaskCommands() as $commandName) {
+                    $command = CommandFactory::create(
+                        $commandName,
+                        $configuration,
+                        $input,
+                        $output
+                    );
+
+                    $command->runCommand();
+                }
+            }
+
+            // on-deploy
+            // on each host after code has been copied
+            $output->writeln("<info>post $taskName</info>");
+
+            foreach ($configuration->getPostTaskCommands() as $commandName) {
+                foreach ($configuration->getHosts() as $host) {
+
+                    $configuration->setCurrentHost($host);
+
+                    $command = CommandFactory::create(
+                        $commandName,
+                        $configuration,
+                        $input,
+                        $output
+                    );
+
+                    $command->runCommand();
+                }
+            }
+
+            // post-release
+            // on each host after release has been activated
+            $output->writeln("<info>after $taskName</info>");
+
+            foreach ($configuration->getAfterTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
                     $commandName,
                     $configuration,
@@ -97,24 +129,9 @@ class ActionExecute extends Command {
 
                 $command->runCommand();
             }
+
+            $output->writeln("<fg=black;bg=green;>task $taskName complete</fg=black;bg=green>");
         }
-
-        // post-release
-        // on each host after release has been activated
-        $output->writeln("<info>after $taskName</info>");
-
-        foreach ($configuration->getAfterTaskCommands() as $commandName) {
-            $command = CommandFactory::create(
-                $commandName,
-                $configuration,
-                $input,
-                $output
-            );
-
-            $command->runCommand();
-        }
-
-        $output->writeln("<fg=black;bg=green;>task $taskName complete</fg=black;bg=green>");
     }
 
 }

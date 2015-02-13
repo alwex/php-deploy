@@ -36,7 +36,9 @@ class ActionAddEnv extends Command {
         $envPath = $configurationPath . '/environments';
         $env = $input->getArgument('name');
 
-        if (!file_exists($envPath . '/' . $env . '.ini')) {
+        if (!is_dir($envPath)) {
+            $output->writeln("<error>Project has not been initialized, please initialize it !!!</error>");
+        } else if (!file_exists($envPath . '/' . $env . '.ini')) {
 
             $output->writeln("<info>Creating default $env.ini file</info>");
 
