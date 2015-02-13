@@ -46,7 +46,7 @@ class ActionAddEnv extends Command {
                 sprintf(
                     "cp %s %s",
                     __DIR__ . '/../../templates/env.ini',
-                    $envPath . "/.php-deploy/environments/$env.ini"
+                    $envPath . "/environments/$env.ini"
                 )
             );
 
