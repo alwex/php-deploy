@@ -66,7 +66,7 @@ class ActionInit extends Command {
                 sprintf(
                     "cp %s %s",
                     __DIR__ . '/../../templates/config.ini',
-                    __DIR__ . '/../../.php-deploy/'
+                    $configurationPath . '/'
                 )
             );
 
@@ -74,7 +74,7 @@ class ActionInit extends Command {
                 sprintf(
                     "cp %s %s",
                     __DIR__ . '/../../templates/ExampleCommand.php',
-                    __DIR__ . '/../../.php-deploy/Command/'
+                    $configurationPath . '/Command/'
                 )
             );
 
