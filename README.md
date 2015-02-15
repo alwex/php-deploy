@@ -6,87 +6,86 @@ to chain commands as described in a simple configuration file, commands are easi
 If you use composer you can easily use it on your project. The main binary file will be available on your binary path
 `bin/pdeploy` and ready to use.
 
-```javascript
-"require-dev": {
-    "alwex/phpdeploy": "1.0.*"
-}
-```
-
-then update your dependencies
-
-`composer update alwex/pdeploy`
+`composer require alwex/pdeploy`
 
 ## Initiating the project
 To use php-deploy you have to initialize your project. Some directory and basic configuration files will be created under the 
 `.php-deploy` directory located in the root of your project.
 
-`bin/pdeploy --init --project=myapp --to=dev`
+`bin/pdeploy action:init myproject`
 
 * _.php-deploy/config.ini_ -> the main configuration file which describe the global project configuration
 * _.php-deploy/environments_ -> environment configuration files goes here
-* _.php-deploy/environments/dev.ini_ -> environment configuration files for the dev environment
-* _.php-deploy/environments/template_ -> environment configuration template is here
 * _.php-deploy/Command_ -> you put your custom commands here
 
-In order to add other environment simply type again the init command changing the `to` parameter
+You may want to modify the config.ini file
 
-eg:
+## Adding some environments
+In order to add environments simply type
 
-`bin/pdeploy --init --project=myapp --to=prod`
+`bin/pdeploy action:addenv production`
 
-here is the _config.ini_ file
-
-```ini
-# project name used to create
-# archives/package files
-project = php-deploy
-# url of your vcs if needed
-vcs=https://github.com/alwex/php-deploy.git
-# working directory where php-deploy
-# will make is export/clone stuff
-workingDirectory=/tmp/php-deploy
-```
-
-And the dev.ini file
+Environment file example:
 
 ```ini
-[user]
 # user used for all remote commands
-login=aguidet
+login=mySshLogin
 
-[deployment]
 # directory where the project is located
 # relatively to the path where you execute
 # bin/pdeploy
 fromDirectory = ./
 # remote or local path where to deploy
 # the application
-toDirectory = /var/wwww/myapp
+toDirectory = /var/www
 # list of hosts where to deploy the app
 hosts[] = 'localhost'
-hosts[] = 'localhost'
+hosts[] = 'web1'
+hosts[] = 'web2'
+# ...
 # name of the symlink allowing
 # multiple apps in the same path
-symlink = current
+symlink = current-php-deploy
 
-[command]
-# PRE DEPLOY
-# executed before deployment
+[deploy]
+# PRE TASK
+# executed before task
 # usually vcs export and build
 # of the package to deploy
-preDeploy[] = Deploy\Command\GitExport
-preDeploy[] = Deploy\Command\ComposerInstall
-preDeploy[] = Deploy\Command\TarGz
+preTask[] = Deploy\Command\GitExport
+preTask[] = Deploy\Command\ComposerInstall
+preTask[] = Deploy\Command\TarGz
 # deployment stage executed against
 # each hosts
-onDeploy[] = Deploy\Command\Scp
-onDeploy[] = Deploy\Command\UnTarGz
+onTask[] = Deploy\Command\Scp
+onTask[] = Deploy\Command\UnTarGz
 # post deployment stage executed
 # on each hosts, usually cache clear,
 # apache reload and symlink generation
 # after this stage, deployment is done!
-postDeploy[] = Deploy\Command\Symlink
-# custom commands located in .php-deploy/Command path
-# postDeploy[] = Ls
-# postDeploy[] = EchoCmd
+postTask[] = Deploy\Command\Symlink
+# after tasks executed one time only
+afterTask[] = ExampleCommand # custom comand
+
+[mytask]
+# PRE TASK
+preTask[] = Deploy\Command\Symlink
+# ON TASK
+onTask[] = Deploy\Command\Symlink
+# POST TASK
+postTask[] = Deploy\Command\Symlink
+# AFTER TASK
+afterTask[] = Deploy\Command\Symlink
+
+# ... and so on as many tasks as necessary
 ```
+
+## Executing a task
+
+Once you have defined the tasks on the environment ini files, you can simply run them with
+
+`bin/pdeploy action:execute --release=0.0.1 --env=production mytask`
+
+## Creating custom commands
+
+To add custom commands, simply add it as php classes on the folder `.php-deploy/Command`, you can duplicate the `ExampleCommand.php` to start
