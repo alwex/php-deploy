@@ -88,4 +88,7 @@ Once you have defined the tasks on the environment ini files, you can simply run
 
 ## Creating custom commands
 
-To add custom commands, simply add it as php classes on the folder `.php-deploy/Command`, you can duplicate the `ExampleCommand.php` to start
+To add custom commands, simply add it as php classes on the folder `.php-deploy/Command`, you can duplicate the `ExampleCommand.php` to start.
+Just add this custom command to a task like for example
+
+`afterTask[] = ExampleCommand`
