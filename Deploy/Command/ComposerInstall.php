@@ -24,7 +24,7 @@ class ComposerInstall extends AbstractCommand {
         $this->shellExec($command);
     }
 
-    public function check() {
+    public function afterRun() {
         $dir = $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->input->getOption('release');
         $vendorDir = $dir . '/vendor';
         if (!is_dir($vendorDir)) {

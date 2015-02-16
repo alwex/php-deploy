@@ -42,10 +42,33 @@ abstract class AbstractCommand {
     }
 
     public function runCommand() {
-        $this->run();
+        // before run
+        // if something is going wrong
+        // the script end
         if (! $this->input->getOption('dry')) {
-            $this->check();
+            $this->beforeRun();
         }
+
+        $this->run();
+
+        // after run
+        // check the post conditions
+        // or finalization tasks
+        if (! $this->input->getOption('dry')) {
+            $this->afterRun();
+        }
+    }
+
+    /**
+     * check the preconditions before running the
+     * command. Throw a RuntimeException if
+     * something is not ok
+     *
+     * @throw \RuntimeException
+     * @return void
+     */
+    public function beforeRun() {
+
     }
 
     /**
@@ -63,7 +86,7 @@ abstract class AbstractCommand {
      * @throw \RuntimeException
      * @return void
      */
-    public function check() {
+    public function afterRun() {
 
     }
 

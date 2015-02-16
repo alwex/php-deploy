@@ -41,7 +41,7 @@ class GitExport extends AbstractCommand {
         $this->shellExec($command);
     }
 
-    public function check() {
+    public function afterRun() {
 
         $workingDir = $this->config->getWorkingDirectory();
         $projectDir = $this->config->getProject() . '-' . $this->input->getOption('release');
