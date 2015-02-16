@@ -99,6 +99,18 @@ ExampleCommand content:
 class ExampleCommand extends \Deploy\Command\AbstractCommand {
 
     /**
+     * check the preconditions before running the
+     * command. Throw a RuntimeException if
+     * something is not ok
+     *
+     * @throw \RuntimeException
+     * @return void
+     */
+    public function beforeRun() {
+
+    }
+    
+    /**
      * execute command and php tasks
      * return the execution status as an integer
      *
@@ -111,13 +123,13 @@ class ExampleCommand extends \Deploy\Command\AbstractCommand {
     }
 
     /**
-     * optionally you may check if the command has been
-     * correctly done
+     * check if the command has been correctly executed
+     * critical commands may be validated before continuing
      *
      * @throw \RuntimeException
+     * @return void
      */
-    public function check() {
-
+    public function afterRun() {
         $expectedValue = 'hello';
         $fileContent = file_get_contents("/tmp/hello.txt");
 
