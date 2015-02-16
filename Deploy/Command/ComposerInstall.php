@@ -18,7 +18,7 @@ class ComposerInstall extends AbstractCommand {
     public function run()
     {
         $command = sprintf(
-            "cd %s && composer install",
+            "cd %s && composer install --optimize-autoloader",
             $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->input->getOption('release')
         );
         $this->shellExec($command);
