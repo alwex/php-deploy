@@ -106,6 +106,7 @@ class ActionExecute extends Command {
             $output->writeln("<info>post $taskName</info>");
 
             foreach ($configuration->getPostTaskCommands() as $commandName) {
+
                 foreach ($configuration->getHosts() as $host) {
 
                     $configuration->setCurrentHost($host);

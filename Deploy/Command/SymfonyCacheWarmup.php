@@ -26,6 +26,6 @@ class SymfonyCacheWarmup extends AbstractCommand {
             $this->input->getOption('env')
         );
 
-        $this->runCommand($command);
+        $this->shellExec($command);
     }
 }
