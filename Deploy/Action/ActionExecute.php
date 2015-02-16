@@ -34,6 +34,12 @@ class ActionExecute extends Command {
                 InputOption::VALUE_REQUIRED,
                 'The environment configuration to use .php-deploy/environment/{env}.ini file'
             )
+            ->addOption(
+                'dry',
+                null,
+                InputOption::VALUE_NONE,
+                'Only output the command to execute, nothing will be executed'
+            )
             ->addArgument(
                 'task',
                 InputArgument::REQUIRED,

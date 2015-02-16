@@ -55,11 +55,15 @@ abstract class AbstractCommand {
 
     protected function shellExec($command) {
         $this->output->writeln("<comment>$command</comment>");
-        exec($command, $this->commandOutput);
 
-        foreach ($this->commandOutput as $line) {
-            $this->output->writeln($line);
+        if (! $this->input->getOption('dry')) {
+            exec($command, $this->commandOutput);
+
+            foreach ($this->commandOutput as $line) {
+                $this->output->writeln($line);
+            }
         }
+
     }
 
 }
