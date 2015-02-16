@@ -6,7 +6,7 @@ to chain commands as described in a simple configuration file, commands are easi
 If you use composer you can easily use it on your project. The main binary file will be available on your binary path
 `bin/pdeploy` and ready to use.
 
-`composer require alwex/pdeploy`
+`composer require alwex/phpdeploy`
 
 ## Initiating the project
 To use php-deploy you have to initialize your project. Some directory and basic configuration files will be created under the 
