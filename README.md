@@ -92,3 +92,38 @@ To add custom commands, simply add it as php classes on the folder `.php-deploy/
 Just add this custom command to a task like for example
 
 `afterTask[] = ExampleCommand`
+
+ExampleCommand content:
+
+```php
+class ExampleCommand extends \Deploy\Command\AbstractCommand {
+
+    /**
+     * execute command and php tasks
+     * return the execution status as an integer
+     *
+     * @return int
+     */
+    public function run()
+    {
+        $command = "echo hello > /tmp/hello.txt";
+        $this->shellExec($command);
+    }
+
+    /**
+     * optionally you may check if the command has been
+     * correctly done
+     *
+     * @throw \RuntimeException
+     */
+    public function check() {
+
+        $expectedValue = 'hello';
+        $fileContent = file_get_contents("/tmp/hello.txt");
+
+        if ($fileContent != $expectedValue) {
+            throw new \RuntimeException("hello file does not contain expected value '$expectedValue', found '$fileContent'");
+        }
+    }
+}
+```
