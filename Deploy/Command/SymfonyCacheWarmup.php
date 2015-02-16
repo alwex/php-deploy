@@ -19,7 +19,9 @@ class SymfonyCacheWarmup extends AbstractCommand {
     public function run()
     {
         $command = sprintf(
-            'cd %s && php app/console cache:warmup --env=%s --no-debug',
+            'ssh %s@%s \"cd %s && php app/console cache:warmup --env=%s --no-debug\"',
+            $this->config->getLogin(),
+            $this->config->getCurrentHost(),
             $this->config->getToDirectory() . '/' . $this->config->getSymlink(),
             $this->input->getOption('env')
         );
