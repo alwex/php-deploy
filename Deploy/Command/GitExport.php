@@ -40,4 +40,17 @@ class GitExport extends AbstractCommand {
 
         $this->shellExec($command);
     }
+
+    public function check() {
+
+        $workingDir = $this->config->getWorkingDirectory();
+        $projectDir = $this->config->getProject() . '-' . $this->input->getOption('release');
+
+        $fullDir = $workingDir . '/' . $projectDir;
+
+        if (!is_dir($fullDir)) {
+            throw new \RuntimeException("git export failed, $fullDir has not been created", 400);
+        }
+
+    }
 }

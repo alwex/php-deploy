@@ -23,4 +23,12 @@ class ComposerInstall extends AbstractCommand {
         );
         $this->shellExec($command);
     }
+
+    public function check() {
+        $dir = $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->input->getOption('release');
+        $vendorDir = $dir . '/vendor';
+        if (!is_dir($vendorDir)) {
+            throw new \RuntimeException("composer install failed, $vendorDir has not been created");
+        }
+    }
 }

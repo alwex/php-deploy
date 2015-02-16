@@ -43,6 +43,9 @@ abstract class AbstractCommand {
 
     public function runCommand() {
         $this->run();
+        if (! $this->input->getOption('dry')) {
+            $this->check();
+        }
     }
 
     /**
@@ -52,6 +55,17 @@ abstract class AbstractCommand {
      * @return int
      */
     public abstract function run();
+
+    /**
+     * check if the command has been correctly executed
+     * critical commands may be validated before continuing
+     *
+     * @throw \RuntimeException
+     * @return void
+     */
+    public function check() {
+
+    }
 
     protected function shellExec($command) {
         $this->output->writeln("<comment>$command</comment>");
