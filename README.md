@@ -99,22 +99,24 @@ ExampleCommand content:
 class ExampleCommand extends \Deploy\Command\AbstractCommand {
 
     /**
-     * check the preconditions before running the
-     * command. Throw a RuntimeException if
-     * something is not ok
+     * optionally you may check if all the
+     * requirement are met before running
+     * the command
      *
      * @throw \RuntimeException
-     * @return void
      */
     public function beforeRun() {
 
+        if (file_exists("/tmp/hello.txt")) {
+            throw new \RuntimeException("hello file already exists");
+        }
     }
-    
+
     /**
      * execute command and php tasks
      * return the execution status as an integer
      *
-     * @return int
+     * @return void
      */
     public function run()
     {
@@ -123,13 +125,13 @@ class ExampleCommand extends \Deploy\Command\AbstractCommand {
     }
 
     /**
-     * check if the command has been correctly executed
-     * critical commands may be validated before continuing
+     * optionally you may check if the command has been
+     * correctly done
      *
      * @throw \RuntimeException
-     * @return void
      */
     public function afterRun() {
+
         $expectedValue = 'hello';
         $fileContent = file_get_contents("/tmp/hello.txt");
 
