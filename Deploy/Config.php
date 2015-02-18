@@ -31,6 +31,7 @@ class Config {
     private $postTaskCommands;
     private $afterTaskCommands;
     private $packageName;
+    private $rawConfiguration;
 
     /**
      * @param InputInterface $input
@@ -48,11 +49,14 @@ class Config {
 
         $task = $input->getArgument('task');
 
+        $rawConfiguration = array();
         // load global config
         if ($globalConfig) {
             $configuration->setProject(ArrayUtil::getArrayValue($globalConfig, 'project'));
             $configuration->setVcs(ArrayUtil::getArrayValue($globalConfig, 'vcs'));
             $configuration->setWorkingDirectory(ArrayUtil::getArrayValue($globalConfig, 'workingDirectory'));
+
+            $rawConfiguration = array_merge($rawConfiguration, $globalConfig);
         }
 
         // load env specific config
@@ -67,11 +71,34 @@ class Config {
             $configuration->setOnTaskCommands(ArrayUtil::getArrayValue($envConfig[$task], 'onTask', array()));
             $configuration->setPostTaskCommands(ArrayUtil::getArrayValue($envConfig[$task], 'postTask', array()));
             $configuration->setAfterTaskCommands(ArrayUtil::getArrayValue($envConfig[$task], 'afterTask', array()));
+
+            $rawConfiguration = array_merge($rawConfiguration, $envConfig);
         }
 
-//        $configuration->setPackageName(NameUtil::generatePackageName($configuration, $arguments));
+        $configuration->setRawConfiguration($rawConfiguration);
 
         return $configuration;
+    }
+
+
+    public function get($name) {
+        return ArrayUtil::getArrayValue($this->getRawConfiguration(), $name, null);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRawConfiguration()
+    {
+        return $this->rawConfiguration;
+    }
+
+    /**
+     * @param mixed $rawConfiguration
+     */
+    public function setRawConfiguration($rawConfiguration)
+    {
+        $this->rawConfiguration = $rawConfiguration;
     }
 
     /**
