@@ -17,5 +17,5 @@ use Symfony\Component\Console\Application;
 $application = new Application();
 $application->add(new \Deploy\Action\ActionInit());
 $application->add(new \Deploy\Action\ActionAddEnv());
-$application->add(new \Deploy\Action\ActionExecute());
+$application->add(new \Deploy\Action\ActionTask());
 $application->run();

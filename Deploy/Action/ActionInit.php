@@ -18,7 +18,7 @@ class ActionInit extends Command {
     protected function configure()
     {
         $this
-            ->setName('action:init')
+            ->setName('config:init')
             ->setDescription('Initialize a new project in the current directory')
             ->addArgument(
                 'name',

@@ -15,17 +15,17 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActionExecute extends Command {
+class ActionTask extends Command {
 
     protected function configure()
     {
         $this
-            ->setName('action:execute')
-            ->setDescription('Execute the specified task')
+            ->setName('run:task')
+            ->setDescription('Run the specified task')
             ->addOption(
                 'release',
                 null,
-                InputOption::VALUE_REQUIRED,
+                InputOption::VALUE_OPTIONAL,
                 'The version of the application you deal with'
             )
             ->addOption(
@@ -51,11 +51,7 @@ class ActionExecute extends Command {
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
-        if ($input->getOption('release') == null) {
-
-            $output->writeln("<error>release option is mandatory</error>");
-
-        } else if ($input->getOption('env') == null) {
+        if ($input->getOption('env') == null) {
 
             $output->writeln("<error>env option is mandatory</error>");
 

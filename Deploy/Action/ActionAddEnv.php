@@ -19,7 +19,7 @@ class ActionAddEnv extends Command {
     protected function configure()
     {
         $this
-            ->setName('action:addenv')
+            ->setName('config:addenv')
             ->setDescription('Create the default environment configuration file, a .php-deploy/environments/{env}.ini default file will be created')
             ->addArgument(
                 'name',
