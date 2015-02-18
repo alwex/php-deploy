@@ -53,11 +53,11 @@ class ActionTask extends Command {
 
         if ($input->getOption('env') == null) {
 
-            $output->writeln("<error>env option is mandatory</error>");
+            throw new \RuntimeException("env option is mandatory");
 
         } else if (!file_exists(getcwd() . '/.php-deploy/environments/' . $input->getOption('env') . '.ini')) {
 
-            $output->writeln("<error>env {$input->getOption('env')} does not exists</error>");
+            throw new \RuntimeException("env " .  $input->getOption('env') . " is not defined");
 
         } else {
 
