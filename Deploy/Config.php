@@ -61,6 +61,11 @@ class Config {
 
         // load env specific config
         if ($envConfig) {
+
+            if (! isset($envConfig[$task])) {
+                throw new \RuntimeException("task $task is not defined for env $env");
+            }
+
             $configuration->setLogin(ArrayUtil::getArrayValue($envConfig, 'login'));
             $configuration->setFromDirectory(ArrayUtil::getArrayValue($envConfig, 'fromDirectory'));
             $configuration->setToDirectory(ArrayUtil::getArrayValue($envConfig, 'toDirectory'));
