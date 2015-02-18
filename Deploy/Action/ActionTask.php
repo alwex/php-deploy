@@ -20,7 +20,7 @@ class ActionTask extends Command {
     protected function configure()
     {
         $this
-            ->setName('run:task')
+            ->setName('task:run')
             ->setDescription('Run the specified task')
             ->addOption(
                 'release',
