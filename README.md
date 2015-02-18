@@ -12,7 +12,7 @@ If you use composer you can easily use it on your project. The main binary file 
 To use php-deploy you have to initialize your project. Some directory and basic configuration files will be created under the 
 `.php-deploy` directory located in the root of your project.
 
-`bin/pdeploy action:init myproject`
+`bin/pdeploy config:init myproject`
 
 * _.php-deploy/config.ini_ -> the main configuration file which describe the global project configuration
 * _.php-deploy/environments_ -> environment configuration files goes here
@@ -23,7 +23,7 @@ You may want to modify the config.ini file
 ## Adding some environments
 In order to add environments simply type
 
-`bin/pdeploy action:addenv production`
+`bin/pdeploy config:addenv production`
 
 Environment file example:
 
@@ -84,7 +84,7 @@ afterTask[] = Deploy\Command\Symlink
 
 Once you have defined the tasks on the environment ini files, you can simply run them with
 
-`bin/pdeploy action:execute --release=0.0.1 --env=production mytask`
+`bin/pdeploy task:run --release=0.0.1 --env=production mytask`
 
 ## Creating custom commands
 
