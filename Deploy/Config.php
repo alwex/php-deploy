@@ -328,6 +328,9 @@ class Config {
     public function setLogin($login)
     {
         $this->login = $login;
+        if ($login == '' || $login == null) {
+            $this->login = $current_user = trim(shell_exec('whoami'));
+        }
     }
 
     /**

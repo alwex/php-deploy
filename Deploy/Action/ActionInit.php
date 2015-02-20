@@ -62,13 +62,10 @@ class ActionInit extends Command {
 
             $output->writeln("<info>Creating initial configuration</info>");
 
-            exec(
-                sprintf(
-                    "cp %s %s",
-                    __DIR__ . '/../../templates/config.ini',
-                    $configurationPath . '/'
-                )
-            );
+            $configContent = file_get_contents(__DIR__ . '/../../templates/config.ini');
+            $configContent = str_replace('{PROJECT_NAME}', $input->getArgument('name'), $configContent);
+            touch($configurationPath . '/config.ini');
+            file_put_contents($configurationPath . '/config.ini', $configContent);
 
             exec(
                 sprintf(
