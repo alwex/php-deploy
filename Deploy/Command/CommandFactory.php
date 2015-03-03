@@ -9,15 +9,13 @@ namespace Deploy\Command;
 
 
 use Deploy\Arguments;
-use Deploy\Config;
 use Deploy\Command;
-use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputArgument;
+use Deploy\Config;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class CommandFactory {
+class CommandFactory
+{
 
     /**
      * @param $commandName
@@ -26,7 +24,8 @@ class CommandFactory {
      * @param Logger $logger
      * @return AbstractCommand
      */
-    public static function create($commandName, Config $config, InputInterface $input, OutputInterface $output, \Symfony\Component\Console\Command\Command $command) {
+    public static function create($commandName, Config $config, InputInterface $input, OutputInterface $output, \Symfony\Component\Console\Command\Command $command)
+    {
 
         if (!class_exists($commandName)) {
             // require the good file

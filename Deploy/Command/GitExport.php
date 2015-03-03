@@ -8,7 +8,8 @@
 namespace Deploy\Command;
 
 
-class GitExport extends AbstractCommand {
+class GitExport extends AbstractCommand
+{
 
     /**
      * execute command and php tasks
@@ -41,7 +42,8 @@ class GitExport extends AbstractCommand {
         $this->shellExec($command);
     }
 
-    public function afterRun() {
+    public function afterRun()
+    {
 
         $workingDir = $this->config->getWorkingDirectory();
         $projectDir = $this->config->getProject() . '-' . $this->input->getOption('release');

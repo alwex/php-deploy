@@ -10,7 +10,8 @@ namespace Deploy\Command;
 
 use Deploy\Util\NameUtil;
 
-class Scp extends AbstractCommand {
+class Scp extends AbstractCommand
+{
 
     /**
      * execute command and php tasks
@@ -31,7 +32,7 @@ class Scp extends AbstractCommand {
         );
 
         $command = sprintf(
-           "scp %s %s@%s:%s",
+            "scp %s %s@%s:%s",
             $this->config->getWorkingDirectory() . '/' . $packageName,
             $this->config->getLogin(),
             $this->config->getCurrentHost(),

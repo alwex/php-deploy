@@ -8,7 +8,8 @@
 namespace Deploy\Command;
 
 
-class SymfonyCacheWarmup extends AbstractCommand {
+class SymfonyCacheWarmup extends AbstractCommand
+{
 
     /**
      * execute command and php tasks

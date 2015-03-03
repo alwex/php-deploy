@@ -8,12 +8,10 @@
 namespace Deploy;
 
 use Deploy\Util\ArrayUtil;
-use Deploy\Util\NameUtil;
-use phpDocumentor\Reflection\DocBlock\Tag\ExampleTag;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Yaml\Exception\RuntimeException;
 
-class Config {
+class Config
+{
 
     private $configurationPath;
     private $hosts = array();
@@ -37,7 +35,8 @@ class Config {
      * @param InputInterface $input
      * @return Config
      */
-    public static function load(InputInterface $input) {
+    public static function load(InputInterface $input)
+    {
         $env = $input->getOption('env');
         $configurationPath = getcwd() . '/.php-deploy';
         $envPath = $configurationPath . '/environments';
@@ -62,7 +61,7 @@ class Config {
         // load env specific config
         if ($envConfig) {
 
-            if (! isset($envConfig[$task])) {
+            if (!isset($envConfig[$task])) {
                 throw new \RuntimeException("task $task is not defined for env $env");
             }
 
@@ -86,7 +85,8 @@ class Config {
     }
 
 
-    public function get($name) {
+    public function get($name)
+    {
         return ArrayUtil::getArrayValue($this->getRawConfiguration(), $name, null);
     }
 

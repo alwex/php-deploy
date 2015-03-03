@@ -7,9 +7,11 @@
 
 namespace Deploy\Util;
 
-class ArrayUtil {
+class ArrayUtil
+{
 
-    public static function getArrayValue(array $array, $key, $default=null) {
+    public static function getArrayValue(array $array, $key, $default = null)
+    {
         return isset($array[$key]) ? $array[$key] : $default;
     }
 

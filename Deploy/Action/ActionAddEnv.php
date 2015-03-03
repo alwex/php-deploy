@@ -7,15 +7,13 @@
 
 namespace Deploy\Action;
 
-use Deploy\Command\CommandFactory;
-use Deploy\Config;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActionAddEnv extends Command {
+class ActionAddEnv extends Command
+{
     protected function configure()
     {
         $this
@@ -25,8 +23,7 @@ class ActionAddEnv extends Command {
                 'name',
                 InputArgument::REQUIRED,
                 'The environment name to create'
-            )
-        ;
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

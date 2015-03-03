@@ -1,10 +1,10 @@
 <?php
+
 /**
  * Example Command
  */
-
-
-class ExampleCommand extends AbstractCommand {
+class ExampleCommand extends AbstractCommand
+{
 
     /**
      * execute command and php tasks

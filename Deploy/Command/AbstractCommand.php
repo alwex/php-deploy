@@ -10,16 +10,14 @@ namespace Deploy\Command;
 use Deploy\Arguments;
 use Deploy\Config;
 use Monolog\Logger;
-use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProcessHelper;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-abstract class AbstractCommand {
+abstract class AbstractCommand
+{
 
     /**
      * @var OutputInterface
@@ -43,7 +41,8 @@ abstract class AbstractCommand {
      */
     protected $command;
 
-    public function __construct(Config $config, InputInterface $input, OutputInterface $output, Command $command) {
+    public function __construct(Config $config, InputInterface $input, OutputInterface $output, Command $command)
+    {
         $this->input = $input;
         $this->output = $output;
         $this->config = $config;
@@ -51,11 +50,12 @@ abstract class AbstractCommand {
         $this->command = $command;
     }
 
-    public function runCommand() {
+    public function runCommand()
+    {
         // before run
         // if something is going wrong
         // the script end
-        if (! $this->input->getOption('dry')) {
+        if (!$this->input->getOption('dry')) {
             $this->beforeRun();
         }
 
@@ -64,7 +64,7 @@ abstract class AbstractCommand {
         // after run
         // check the post conditions
         // or finalization tasks
-        if (! $this->input->getOption('dry')) {
+        if (!$this->input->getOption('dry')) {
             $this->afterRun();
         }
     }
@@ -77,7 +77,8 @@ abstract class AbstractCommand {
      * @throw \RuntimeException
      * @return void
      */
-    public function beforeRun() {
+    public function beforeRun()
+    {
 
     }
 
@@ -96,13 +97,15 @@ abstract class AbstractCommand {
      * @throw \RuntimeException
      * @return void
      */
-    public function afterRun() {
+    public function afterRun()
+    {
 
     }
 
-    protected function shellExec($command) {
+    protected function shellExec($command)
+    {
 
-        if (! $this->input->getOption('dry')) {
+        if (!$this->input->getOption('dry')) {
 
             /* @var $helper ProcessHelper */
             $helper = $this->command->getHelper('process');

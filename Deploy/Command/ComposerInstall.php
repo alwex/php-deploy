@@ -7,7 +7,8 @@
 
 namespace Deploy\Command;
 
-class ComposerInstall extends AbstractCommand {
+class ComposerInstall extends AbstractCommand
+{
 
     /**
      * execute command and php tasks
@@ -24,7 +25,8 @@ class ComposerInstall extends AbstractCommand {
         $this->shellExec($command);
     }
 
-    public function afterRun() {
+    public function afterRun()
+    {
         $dir = $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->input->getOption('release');
         $vendorDir = $dir . '/vendor';
         if (!is_dir($vendorDir)) {

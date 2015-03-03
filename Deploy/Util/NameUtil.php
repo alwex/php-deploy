@@ -12,14 +12,17 @@ use Deploy\Arguments;
 use Deploy\Config;
 use Symfony\Component\Console\Input\InputInterface;
 
-class NameUtil {
+class NameUtil
+{
 
-    public static function generatePackageName(Config $config, InputInterface $input) {
+    public static function generatePackageName(Config $config, InputInterface $input)
+    {
         return self::generateDirectoryName($config, $input)
         . '.tar.gz';
     }
 
-    public static function generateDirectoryName(Config $config, InputInterface $input) {
+    public static function generateDirectoryName(Config $config, InputInterface $input)
+    {
         return $config->getProject()
         . '-'
         . $input->getOption('release');

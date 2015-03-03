@@ -15,7 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActionTask extends Command {
+class ActionTask extends Command
+{
 
     private static $startTag = "<fg=black;bg=white;>";
     private static $endTag = "</fg=black;bg=white;>";
@@ -47,8 +48,7 @@ class ActionTask extends Command {
                 'task',
                 InputArgument::REQUIRED,
                 'The task previously defined in the .php-deploy/environment/{env}.ini file'
-            )
-        ;
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -64,7 +64,7 @@ class ActionTask extends Command {
 
         } else if (!file_exists(getcwd() . '/.php-deploy/environments/' . $input->getOption('env') . '.ini')) {
 
-            throw new \RuntimeException("env " .  $input->getOption('env') . " is not defined");
+            throw new \RuntimeException("env " . $input->getOption('env') . " is not defined");
 
         } else {
 

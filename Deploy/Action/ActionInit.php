@@ -10,10 +10,10 @@ namespace Deploy\Action;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActionInit extends Command {
+class ActionInit extends Command
+{
 
     protected function configure()
     {
@@ -24,8 +24,7 @@ class ActionInit extends Command {
                 'name',
                 InputArgument::REQUIRED,
                 'The project name that will be used for archive and deployment directory'
-            )
-        ;
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

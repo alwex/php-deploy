@@ -10,7 +10,8 @@ namespace Deploy\Command;
 
 use Deploy\Util\NameUtil;
 
-class Symlink extends AbstractCommand {
+class Symlink extends AbstractCommand
+{
 
     /**
      * execute command and php tasks

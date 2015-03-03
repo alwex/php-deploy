@@ -10,7 +10,8 @@ namespace Deploy\Command;
 
 use Deploy\Util\NameUtil;
 
-class Mkdir extends AbstractCommand {
+class Mkdir extends AbstractCommand
+{
 
     /**
      * execute command and php tasks

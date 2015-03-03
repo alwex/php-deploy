@@ -10,7 +10,8 @@ namespace Deploy\Command;
 
 use Deploy\Util\NameUtil;
 
-class UnTarGz extends AbstractCommand {
+class UnTarGz extends AbstractCommand
+{
 
     /**
      * execute command and php tasks

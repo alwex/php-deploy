@@ -10,7 +10,8 @@ namespace Deploy\Command;
 
 use Deploy\Util\NameUtil;
 
-class Rm extends AbstractCommand {
+class Rm extends AbstractCommand
+{
 
     /**
      * execute command and php tasks

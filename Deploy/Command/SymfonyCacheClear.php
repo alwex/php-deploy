@@ -8,7 +8,8 @@
 namespace Deploy\Command;
 
 
-class SymfonyCacheClear extends AbstractCommand {
+class SymfonyCacheClear extends AbstractCommand
+{
 
     /**
      * execute command and php tasks

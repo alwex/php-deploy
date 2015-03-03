@@ -18,4 +18,5 @@ $application = new Application();
 $application->add(new \Deploy\Action\ActionInit());
 $application->add(new \Deploy\Action\ActionAddEnv());
 $application->add(new \Deploy\Action\ActionTask());
+$application->add(new \Deploy\Action\ActionAddCommand());
 $application->run();
