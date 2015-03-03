@@ -21,8 +21,9 @@ class ActionAddEnv extends Command
             ->setDescription('Create the default environment configuration file, a .php-deploy/environments/{env}.ini default file will be created')
             ->addArgument(
                 'name',
-                InputArgument::REQUIRED,
-                'The environment name to create'
+                InputArgument::OPTIONAL,
+                'The environment name to create',
+                'dev'
             );
     }
 

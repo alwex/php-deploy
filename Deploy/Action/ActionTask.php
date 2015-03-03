@@ -36,7 +36,8 @@ class ActionTask extends Command
                 'env',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'The environment configuration to use .php-deploy/environment/{env}.ini file'
+                'The environment configuration to use .php-deploy/environment/{env}.ini file',
+                'dev'
             )
             ->addOption(
                 'dry',
