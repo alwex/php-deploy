@@ -10,10 +10,14 @@ namespace Deploy\Command;
 use Deploy\Arguments;
 use Deploy\Config;
 use Monolog\Logger;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 abstract class AbstractCommand {
 
@@ -34,11 +38,17 @@ abstract class AbstractCommand {
 
     protected $commandOutput;
 
-    public function __construct(Config $config, InputInterface $input, OutputInterface $output) {
+    /**
+     * @var Command
+     */
+    protected $command;
+
+    public function __construct(Config $config, InputInterface $input, OutputInterface $output, Command $command) {
         $this->input = $input;
         $this->output = $output;
         $this->config = $config;
         $this->commandOutput = array();
+        $this->command = $command;
     }
 
     public function runCommand() {
@@ -91,14 +101,20 @@ abstract class AbstractCommand {
     }
 
     protected function shellExec($command) {
-        $this->output->writeln("<comment>$command</comment>");
 
         if (! $this->input->getOption('dry')) {
-            exec($command, $this->commandOutput);
 
-            foreach ($this->commandOutput as $line) {
-                $this->output->writeln($line);
+            /* @var $helper ProcessHelper */
+            $helper = $this->command->getHelper('process');
+            $process = new Process($command);
+            $helper->run($this->output, $process);
+
+            if (!$process->isSuccessful()) {
+                throw new \RuntimeException($process->getErrorOutput());
             }
+
+        } else {
+            $this->output->writeln("<comment>$command</comment>");
         }
 
     }

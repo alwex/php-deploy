@@ -17,6 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ActionTask extends Command {
 
+    private static $startTag = "<fg=black;bg=white;>";
+    private static $endTag = "</fg=black;bg=white;>";
+
     protected function configure()
     {
         $this
@@ -51,6 +54,10 @@ class ActionTask extends Command {
     protected function execute(InputInterface $input, OutputInterface $output)
     {
 
+        if ($output->getVerbosity() < OutputInterface::VERBOSITY_VERY_VERBOSE) {
+            $output->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
+        }
+
         if ($input->getOption('env') == null) {
 
             throw new \RuntimeException("env option is mandatory");
@@ -65,20 +72,21 @@ class ActionTask extends Command {
             $configuration = Config::load($input);
             $taskName = $input->getArgument('task');
 
-            $output->writeln("<info>before $taskName</info>");
+            $output->writeln(self::$startTag . "  BEFORE $taskName  " . self::$endTag);
 
             foreach ($configuration->getPreTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
                     $commandName,
                     $configuration,
                     $input,
-                    $output
+                    $output,
+                    $this
                 );
 
                 $command->runCommand();
             }
 
-            $output->writeln("<info>on $taskName</info>");
+            $output->writeln(self::$startTag . "  ON $taskName  " . self::$endTag);
 
             // deployment phase on each host
             foreach ($configuration->getHosts() as $host) {
@@ -90,7 +98,8 @@ class ActionTask extends Command {
                         $commandName,
                         $configuration,
                         $input,
-                        $output
+                        $output,
+                        $this
                     );
 
                     $command->runCommand();
@@ -99,7 +108,7 @@ class ActionTask extends Command {
 
             // on-deploy
             // on each host after code has been copied
-            $output->writeln("<info>post $taskName</info>");
+            $output->writeln(self::$startTag . "  POST $taskName  " . self::$endTag);
 
             foreach ($configuration->getPostTaskCommands() as $commandName) {
 
@@ -111,7 +120,8 @@ class ActionTask extends Command {
                         $commandName,
                         $configuration,
                         $input,
-                        $output
+                        $output,
+                        $this
                     );
 
                     $command->runCommand();
@@ -120,20 +130,21 @@ class ActionTask extends Command {
 
             // post-release
             // on each host after release has been activated
-            $output->writeln("<info>after $taskName</info>");
+            $output->writeln(self::$startTag . "  AFTER $taskName  " . self::$endTag);
 
             foreach ($configuration->getAfterTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
                     $commandName,
                     $configuration,
                     $input,
-                    $output
+                    $output,
+                    $this
                 );
 
                 $command->runCommand();
             }
 
-            $output->writeln("<fg=black;bg=green;>task $taskName complete</fg=black;bg=green>");
+            $output->writeln(self::$startTag . "  TASK $taskName COMPLETE  " . self::$endTag);
         }
     }
 
