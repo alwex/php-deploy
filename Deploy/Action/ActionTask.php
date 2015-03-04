@@ -73,7 +73,9 @@ class ActionTask extends Command
             $configuration = Config::load($input);
             $taskName = $input->getArgument('task');
 
-            $output->writeln(self::$startTag . "  BEFORE $taskName  " . self::$endTag);
+            if (count($configuration->getPreTaskCommands()) > 0) {
+                $output->writeln(self::$startTag . "  BEFORE $taskName  " . self::$endTag);
+            }
 
             foreach ($configuration->getPreTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
@@ -87,7 +89,9 @@ class ActionTask extends Command
                 $command->runCommand();
             }
 
-            $output->writeln(self::$startTag . "  ON $taskName  " . self::$endTag);
+            if (count($configuration->getOnTaskCommands()) > 0) {
+                $output->writeln(self::$startTag . "  ON $taskName  " . self::$endTag);
+            }
 
             // deployment phase on each host
             foreach ($configuration->getHosts() as $host) {
@@ -109,7 +113,9 @@ class ActionTask extends Command
 
             // on-deploy
             // on each host after code has been copied
-            $output->writeln(self::$startTag . "  POST $taskName  " . self::$endTag);
+            if (count($configuration->getPostTaskCommands()) > 0) {
+                $output->writeln(self::$startTag . "  POST $taskName  " . self::$endTag);
+            }
 
             foreach ($configuration->getPostTaskCommands() as $commandName) {
 
@@ -131,7 +137,9 @@ class ActionTask extends Command
 
             // post-release
             // on each host after release has been activated
-            $output->writeln(self::$startTag . "  AFTER $taskName  " . self::$endTag);
+            if (count($configuration->getAfterTaskCommands()) > 0) {
+                $output->writeln(self::$startTag . "  AFTER $taskName  " . self::$endTag);
+            }
 
             foreach ($configuration->getAfterTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
