@@ -19,8 +19,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ActionTask extends Command
 {
 
-    private static $startTag = "<fg=black;bg=white;>";
-    private static $endTag = "</fg=black;bg=white;>";
+    private static $taskStartTag = "<fg=black;bg=white;>";
+    private static $taskEndTag = "</fg=black;bg=white;>";
+    private static $hostStartTag = "<fg=black;bg=yellow;>";
+    private static $hostEndTag = "</fg=black;bg=yellow;>";
 
     protected function configure()
     {
@@ -78,7 +80,7 @@ class ActionTask extends Command
             $taskName = $input->getArgument('task');
 
             if (count($configuration->getPreTaskCommands()) > 0) {
-                $output->writeln("<comment>BEFORE $taskName</comment>");
+                $output->writeln(self::$taskStartTag . "  BEFORE $taskName " . self::$taskEndTag);
             }
 
             foreach ($configuration->getPreTaskCommands() as $commandName) {
@@ -94,13 +96,13 @@ class ActionTask extends Command
             }
 
             if (count($configuration->getOnTaskCommands()) > 0) {
-                $output->writeln("<comment>ON $taskName</comment>");
+                $output->writeln(self::$taskStartTag . "  ON $taskName " . self::$taskEndTag);
             }
 
             // deployment phase on each host
             foreach ($configuration->getHosts() as $host) {
 
-                $output->writeln("<comment>ON $taskName on $host</comment>");
+                $output->writeln(self::$hostStartTag . "  ON $taskName on $host " . self::$hostEndTag);
 
                 $configuration->setCurrentHost($host);
 
@@ -120,14 +122,14 @@ class ActionTask extends Command
             // on-deploy
             // on each host after code has been copied
             if (count($configuration->getPostTaskCommands()) > 0) {
-                $output->writeln("<comment>POST $taskName</comment>");
+                $output->writeln(self::$taskStartTag . "  POST $taskName " . self::$taskEndTag);
             }
 
             foreach ($configuration->getPostTaskCommands() as $commandName) {
 
                 foreach ($configuration->getHosts() as $host) {
 
-                    $output->writeln("<comment>POST $taskName on $host</comment>");
+                    $output->writeln(self::$hostStartTag . "  POST $taskName on $host " . self::$hostEndTag);
 
                     $configuration->setCurrentHost($host);
 
@@ -146,7 +148,7 @@ class ActionTask extends Command
             // post-release
             // on each host after release has been activated
             if (count($configuration->getAfterTaskCommands()) > 0) {
-                $output->writeln("<comment>AFTER $taskName</comment>");
+                $output->writeln(self::$taskStartTag . "  AFTER $taskName " . self::$taskEndTag);
             }
 
             foreach ($configuration->getAfterTaskCommands() as $commandName) {
@@ -161,7 +163,8 @@ class ActionTask extends Command
                 $command->runCommand();
             }
 
-            $output->writeln("<comment>COMPLETE $taskName</comment>");
+            $output->writeln(self::$taskStartTag . "  COMPLETE $taskName " . self::$taskEndTag);
+
         }
     }
 
