@@ -11,6 +11,7 @@ use Deploy\Arguments;
 use Deploy\Config;
 use Monolog\Logger;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -117,7 +118,9 @@ abstract class AbstractCommand
             }
 
         } else {
-            $this->output->writeln("<comment>$command</comment>");
+            /* @var $format DebugFormatterHelper */
+            $format = $this->command->getHelperSet()->get('debug_formatter');
+            $this->output->write($format->start(spl_object_hash($this), $command, 'DRY'));
         }
 
     }
