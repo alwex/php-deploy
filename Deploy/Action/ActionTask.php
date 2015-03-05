@@ -21,8 +21,8 @@ class ActionTask extends Command
 
     private static $taskStartTag = "<fg=black;bg=white;>";
     private static $taskEndTag = "</fg=black;bg=white;>";
-    private static $hostStartTag = "<fg=black;bg=yellow;>";
-    private static $hostEndTag = "</fg=black;bg=yellow;>";
+    private static $hostStartTag = "<fg=yellow;bg=black;>";
+    private static $hostEndTag = "</fg=yellow;bg=black;>";
 
     protected function configure()
     {

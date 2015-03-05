@@ -113,6 +113,8 @@ abstract class AbstractCommand
             $process = new Process($command);
             $helper->run($this->output, $process);
 
+            $this->commandOutput = $process->getOutput();
+
             if (!$process->isSuccessful()) {
                 throw new \RuntimeException($process->getErrorOutput());
             }
