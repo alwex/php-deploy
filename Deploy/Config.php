@@ -38,10 +38,14 @@ class Config
     public static function load(InputInterface $input)
     {
         $env = $input->getOption('env');
-        $configurationPath = getcwd() . '/.php-deploy';
-        $envPath = $configurationPath . '/environments';
 
-        @$envConfig = parse_ini_file($envPath . '/' . $env . '.ini', true);
+        if (file_exists(getcwd() . '/.php-deploy')) {
+            $configurationPath = getcwd() . '/.php-deploy';
+        } else {
+            $configurationPath = '/etc/php-deploy/';
+        }
+
+        $envConfig = self::loadEnv($env);
         @$globalConfig = parse_ini_file($configurationPath . '/config.ini');
 
         $configuration = new Config();
@@ -84,6 +88,28 @@ class Config
         return $configuration;
     }
 
+
+    public static function loadEnv($env = 'dev')
+    {
+
+        if (is_dir(getcwd() . '/.php-deploy')) {
+            $configurationPath = getcwd() . '/.php-deploy';
+        } else {
+            $configurationPath = '/etc/php-deploy';
+        }
+
+        $envPath = $configurationPath . '/environments';
+
+        if (!file_exists($envPath . '/' . $env . '.ini')) {
+
+            throw new \RuntimeException("env " . $env . " is not defined");
+
+        }
+
+        @$envConfig = parse_ini_file($envPath . '/' . $env . '.ini', true);
+
+        return $envConfig;
+    }
 
     public function get($name)
     {
