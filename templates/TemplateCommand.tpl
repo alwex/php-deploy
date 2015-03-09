@@ -18,7 +18,7 @@ class {COMMAND_NAME}Command extends AbstractCommand
      */
     public function beforeRun()
     {
-        $this->shellExec("figlet BEFORE");
+        $this->shellExec("figlet before {COMMAND_NAME}");
     }
 
     /**
@@ -29,7 +29,7 @@ class {COMMAND_NAME}Command extends AbstractCommand
      */
     public function run()
     {
-        $this->shellExec("figlet HELLO");
+        $this->shellExec("figlet running {COMMAND_NAME}");
     }
 
     /**
@@ -41,6 +41,6 @@ class {COMMAND_NAME}Command extends AbstractCommand
      */
     public function afterRun()
     {
-        $this->shellExec("figlet AFTER");
+        $this->shellExec("figlet after {COMMAND_NAME}");
     }
 }

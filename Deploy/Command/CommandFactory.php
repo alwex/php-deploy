@@ -26,10 +26,15 @@ class CommandFactory
      */
     public static function create($commandName, Config $config, InputInterface $input, OutputInterface $output, \Symfony\Component\Console\Command\Command $command)
     {
-
         if (!class_exists($commandName)) {
             // require the good file
-            require_once getcwd() . '/.php-deploy/Command/' . $commandName . '.php';
+            $commandPath = getcwd() . '/.php-deploy/Command';
+
+            if (!is_dir($commandPath)) {
+                $commandPath = '/etc/php-deploy/Command';
+            }
+
+            require_once $commandPath . '/' . $commandName . '.php';
         }
 
         return new $commandName($config, $input, $output, $command);
