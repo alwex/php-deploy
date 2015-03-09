@@ -13,10 +13,16 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 }
 
 use Symfony\Component\Console\Application;
+use Deploy\Action\ActionTaskRun;
+use Deploy\Action\ActionAddEnv;
+use Deploy\Action\ActionInit;
+use Deploy\Action\ActionAddCommand;
+use Deploy\Action\ActionTaskList;
 
 $application = new Application();
-$application->add(new \Deploy\Action\ActionInit());
-$application->add(new \Deploy\Action\ActionAddEnv());
-$application->add(new \Deploy\Action\ActionTask());
-$application->add(new \Deploy\Action\ActionAddCommand());
+$application->add(new ActionInit());
+$application->add(new ActionAddEnv());
+$application->add(new ActionTaskRun());
+$application->add(new ActionAddCommand());
+$application->add(new ActionTaskList());
 $application->run();
