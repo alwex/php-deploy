@@ -49,9 +49,10 @@ class ActionTaskList extends Command
                     foreach ($value as $stageName => $commandList) {
                         foreach ($commandList as $commandName) {
 
-                            $formated = str_pad("=> $commandName", 10, ' ', STR_PAD_LEFT);
+                            $formatedStageName = str_pad($stageName, 10);
+                            $formatedCommandName = str_pad($commandName, 0);
 
-                            $output->writeln("  $stageName $formated");
+                            $output->writeln("   $formatedStageName  $formatedCommandName");
                         }
                     }
                 }
