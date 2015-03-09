@@ -16,7 +16,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActionTask extends Command
+class ActionTaskRun extends Command
 {
 
     private static $taskStartTag = "<fg=black;bg=white;>";
@@ -65,23 +65,12 @@ class ActionTask extends Command
             $output->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
         }
 
-        if ($input->getOption('env') == null) {
 
-            throw new \RuntimeException("env option is mandatory");
+        $configuration = Config::load($input);
+        $taskName = $input->getArgument('task');
 
-        } else if (!file_exists(getcwd() . '/.php-deploy/environments/' . $input->getOption('env') . '.ini')) {
-
-            throw new \RuntimeException("env " . $input->getOption('env') . " is not defined");
-
-        } else {
-
-
-            $configuration = Config::load($input);
-            $taskName = $input->getArgument('task');
-
-            if (count($configuration->getPreTaskCommands()) > 0) {
-                $output->writeln(self::$taskStartTag . "  BEFORE $taskName " . self::$taskEndTag);
-            }
+        if (count($configuration->getPreTaskCommands()) > 0) {
+            $output->writeln(self::$taskStartTag . "  BEFORE $taskName " . self::$taskEndTag);
 
             foreach ($configuration->getPreTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
@@ -94,10 +83,10 @@ class ActionTask extends Command
 
                 $command->runCommand();
             }
+        }
 
-            if (count($configuration->getOnTaskCommands()) > 0) {
-                $output->writeln(self::$taskStartTag . "  ON $taskName " . self::$taskEndTag);
-            }
+        if (count($configuration->getOnTaskCommands()) > 0) {
+            $output->writeln(self::$taskStartTag . "  ON $taskName " . self::$taskEndTag);
 
             // deployment phase on each host
             foreach ($configuration->getHosts() as $host) {
@@ -119,11 +108,12 @@ class ActionTask extends Command
                 }
             }
 
-            // on-deploy
-            // on each host after code has been copied
-            if (count($configuration->getPostTaskCommands()) > 0) {
-                $output->writeln(self::$taskStartTag . "  POST $taskName " . self::$taskEndTag);
-            }
+        }
+
+        // on-deploy
+        // on each host after code has been copied
+        if (count($configuration->getPostTaskCommands()) > 0) {
+            $output->writeln(self::$taskStartTag . "  POST $taskName " . self::$taskEndTag);
 
             foreach ($configuration->getPostTaskCommands() as $commandName) {
 
@@ -144,12 +134,12 @@ class ActionTask extends Command
                     $command->runCommand();
                 }
             }
+        }
 
-            // post-release
-            // on each host after release has been activated
-            if (count($configuration->getAfterTaskCommands()) > 0) {
-                $output->writeln(self::$taskStartTag . "  AFTER $taskName " . self::$taskEndTag);
-            }
+        // post-release
+        // on each host after release has been activated
+        if (count($configuration->getAfterTaskCommands()) > 0) {
+            $output->writeln(self::$taskStartTag . "  AFTER $taskName " . self::$taskEndTag);
 
             foreach ($configuration->getAfterTaskCommands() as $commandName) {
                 $command = CommandFactory::create(
@@ -162,10 +152,9 @@ class ActionTask extends Command
 
                 $command->runCommand();
             }
-
-            $output->writeln(self::$taskStartTag . "  COMPLETE $taskName " . self::$taskEndTag);
-
         }
+
+        $output->writeln(self::$taskStartTag . "  COMPLETE $taskName " . self::$taskEndTag);
     }
 
 }
