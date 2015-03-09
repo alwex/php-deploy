@@ -73,6 +73,10 @@ class Config
                 $configuration->setVcs(ArrayUtil::getArrayValue($envConfig, 'vcs'));
             }
 
+            if (ArrayUtil::getArrayValue($envConfig, 'project') != null) {
+                $configuration->setProject(ArrayUtil::getArrayValue($envConfig, 'project'));
+            }
+
             $configuration->setLogin(ArrayUtil::getArrayValue($envConfig, 'login'));
             $configuration->setFromDirectory(ArrayUtil::getArrayValue($envConfig, 'fromDirectory'));
             $configuration->setToDirectory(ArrayUtil::getArrayValue($envConfig, 'toDirectory'));
