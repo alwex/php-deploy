@@ -69,6 +69,10 @@ class Config
                 throw new \RuntimeException("task $task is not defined for env $env");
             }
 
+            if (ArrayUtil::getArrayValue($envConfig, 'vcs') != null) {
+                $configuration->setVcs(ArrayUtil::getArrayValue($envConfig, 'vcs'));
+            }
+
             $configuration->setLogin(ArrayUtil::getArrayValue($envConfig, 'login'));
             $configuration->setFromDirectory(ArrayUtil::getArrayValue($envConfig, 'fromDirectory'));
             $configuration->setToDirectory(ArrayUtil::getArrayValue($envConfig, 'toDirectory'));
