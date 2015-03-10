@@ -9,7 +9,6 @@ namespace Deploy\Command;
 
 use Deploy\Arguments;
 use Deploy\Config;
-use Monolog\Logger;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\ProcessHelper;
@@ -51,23 +50,23 @@ abstract class AbstractCommand
         $this->command = $command;
     }
 
+    public function isDry()
+    {
+        return $this->input->getOption('dry');
+    }
+
     public function runCommand()
     {
         // before run
         // if something is going wrong
         // the script end
-        if (!$this->input->getOption('dry')) {
-            $this->beforeRun();
-        }
-
+        $this->beforeRun();
+        // run the command
         $this->run();
-
         // after run
         // check the post conditions
         // or finalization tasks
-        if (!$this->input->getOption('dry')) {
-            $this->afterRun();
-        }
+        $this->afterRun();
     }
 
     /**
