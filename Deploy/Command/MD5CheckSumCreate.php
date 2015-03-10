@@ -27,16 +27,17 @@ class MD5CheckSumCreate extends AbstractCommand
 
         $projectName = $this->config->getProject();
 
-        $command = 'cd %s ; find -exec md5sum "{}" \; > /tmp/%s.md5.tmp ; md5sum /tmp/%s.md5.tmp > /tmp/%s.md5';
+        $command = 'cd %s ; find . ! -name CHECKSUM.md5 -exec md5sum {} + | sort | md5sum';
 
         $command = sprintf(
             $command,
-            $this->config->getWorkingDirectory() . '/' . $directoryName,
-            $projectName,
-            $projectName,
-            $projectName
+            $this->config->getWorkingDirectory() . '/' . $directoryName
         );
 
         $this->shellExec($command);
+
+        if (!$this->input->getOption('dry')) {
+            file_put_contents($this->config->getWorkingDirectory() . '/' . $directoryName . '/CHECKSUM.md5', trim($this->commandOutput));
+        }
     }
 }
