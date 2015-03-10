@@ -27,10 +27,9 @@ class MD5CheckSumCheck extends AbstractCommand
 
         $projectName = $this->config->getProject();
 
-        $command = 'ssh %s@%s " cd %s ; find . ! -name CHECKSUM.md5 -exec md5sum {} + | sort | md5sum "';
 
         $command = sprintf(
-            $command,
+            'ssh %s@%s " cd %s ; find . ! -name CHECKSUM.md5 -exec md5sum {} + | sort | md5sum "',
             $this->config->getLogin(),
             $this->config->getCurrentHost(),
             $this->config->getToDirectory() . '/' . $directoryName
@@ -38,10 +37,20 @@ class MD5CheckSumCheck extends AbstractCommand
 
         $this->shellExec($command);
 
-        if (!$this->input->getOption('dry')) {
-            $expected = trim(file_get_contents($this->config->getToDirectory() . '/' . $directoryName . '/CHECKSUM.md5'));
-            $result = trim($this->commandOutput);
+        $result = trim($this->commandOutput);
 
+        $command = sprintf(
+            'ssh %s@%s " cd %s ; cat CHECKSUM.md5 "',
+            $this->config->getLogin(),
+            $this->config->getCurrentHost(),
+            $this->config->getToDirectory() . '/' . $directoryName
+        );
+
+        $this->shellExec($command);
+
+        $expected = trim($this->commandOutput);
+
+        if (!$this->input->getOption('dry')) {
             if ($expected != $result) {
                 throw new \RuntimeException("extracted code MD5 sum differs from package expected [$expected] found [$result]");
             }
