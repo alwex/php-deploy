@@ -30,6 +30,7 @@ class GitExport extends AbstractCommand
         $command = sprintf("mkdir -p %s", $workingDir);
         $this->shellExec($command);
 
+        // clone project
         $command = sprintf(
             "cd %s && git clone %s %s && cd %s && git checkout -f refs/tags/%s",
             $workingDir,
@@ -37,6 +38,14 @@ class GitExport extends AbstractCommand
             $this->config->getProject() . '-' . $this->input->getOption('release'),
             $this->config->getProject() . '-' . $this->input->getOption('release'),
             $this->input->getOption('release')
+        );
+
+        $this->shellExec($command);
+
+        // remove .git
+        $command = sprintf(
+            "cd %s && rm  -rf .git",
+            $workingDir . '/' . $this->config->getProject() . '-' . $this->input->getOption('release')
         );
 
         $this->shellExec($command);
