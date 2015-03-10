@@ -44,7 +44,7 @@ class GitExport extends AbstractCommand
 
         // remove .git
         $command = sprintf(
-            "cd %s && rm  -rf .git",
+            "cd %s && rm -rf .git",
             $workingDir . '/' . $this->config->getProject() . '-' . $this->input->getOption('release')
         );
 
@@ -53,15 +53,15 @@ class GitExport extends AbstractCommand
 
     public function afterRun()
     {
+        if (!$this->isDry()) {
+            $workingDir = $this->config->getWorkingDirectory();
+            $projectDir = $this->config->getProject() . '-' . $this->input->getOption('release');
 
-        $workingDir = $this->config->getWorkingDirectory();
-        $projectDir = $this->config->getProject() . '-' . $this->input->getOption('release');
+            $fullDir = $workingDir . '/' . $projectDir;
 
-        $fullDir = $workingDir . '/' . $projectDir;
-
-        if (!is_dir($fullDir)) {
-            throw new \RuntimeException("git export failed, $fullDir has not been created", 400);
+            if (!is_dir($fullDir)) {
+                throw new \RuntimeException("git export failed, $fullDir has not been created", 400);
+            }
         }
-
     }
 }
