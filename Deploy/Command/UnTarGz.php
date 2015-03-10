@@ -22,20 +22,20 @@ class UnTarGz extends AbstractCommand
     public function run()
     {
         $packageName = NameUtil::generatePackageName(
-            $this->config,
+            $this->getProjectName(),
             $this->input
         );
 
         $directoryName = NameUtil::generateDirectoryName(
-            $this->config,
+            $this->getProjectName(),
             $this->input
         );
 
         $command = sprintf(
             "ssh %s@%s \"cd %s && tar -xzf %s && rm %s\"",
-            $this->config->getLogin(),
-            $this->config->getCurrentHost(),
-            $this->config->getToDirectory(),
+            get_current_user(),
+            $this->getCurrentHost(),
+            $this->get('directory'),
             $packageName,
             $packageName
         );

@@ -9,6 +9,7 @@ namespace Deploy\Command;
 
 use Deploy\Arguments;
 use Deploy\Config;
+use Deploy\Util\ArrayUtil;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Helper\ProcessHelper;
@@ -18,6 +19,15 @@ use Symfony\Component\Process\Process;
 
 abstract class AbstractCommand
 {
+
+    protected $workingDirectory;
+    protected $projectName;
+    protected $currentHost;
+
+    /**
+     * @var array
+     */
+    protected $params = array();
 
     /**
      * @var OutputInterface
@@ -34,6 +44,7 @@ abstract class AbstractCommand
      */
     protected $config;
 
+
     protected $commandOutput;
 
     /**
@@ -41,7 +52,7 @@ abstract class AbstractCommand
      */
     protected $command;
 
-    public function __construct(Config $config, InputInterface $input, OutputInterface $output, Command $command)
+    public function __construct(array $config, InputInterface $input, OutputInterface $output, Command $command)
     {
         $this->input = $input;
         $this->output = $output;
@@ -50,9 +61,67 @@ abstract class AbstractCommand
         $this->command = $command;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCurrentHost()
+    {
+        return $this->currentHost;
+    }
+
+    /**
+     * @param mixed $currentHost
+     */
+    public function setCurrentHost($currentHost)
+    {
+        $this->currentHost = $currentHost;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProjectName()
+    {
+        return $this->projectName;
+    }
+
+    /**
+     * @param mixed $projectName
+     */
+    public function setProjectName($projectName)
+    {
+        $this->projectName = $projectName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWorkingDirectory()
+    {
+        return $this->workingDirectory;
+    }
+
+    /**
+     * @param mixed $workingDirectory
+     */
+    public function setWorkingDirectory($workingDirectory)
+    {
+        $this->workingDirectory = $workingDirectory;
+    }
+
     public function isDry()
     {
         return $this->input->getOption('dry');
+    }
+
+    public function setParam($key, $value)
+    {
+        $this->params[$key] = $value;
+    }
+
+    public function get($key)
+    {
+        return ArrayUtil::getArrayValue($this->params, $key, null);
     }
 
     public function runCommand()

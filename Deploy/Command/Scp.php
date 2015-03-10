@@ -22,21 +22,21 @@ class Scp extends AbstractCommand
     public function run()
     {
         $packageName = NameUtil::generatePackageName(
-            $this->config,
+            $this->getProjectName(),
             $this->input
         );
 
         $directoryName = NameUtil::generateDirectoryName(
-            $this->config,
+            $this->getProjectName(),
             $this->input
         );
 
         $command = sprintf(
             "scp %s %s@%s:%s",
-            $this->config->getWorkingDirectory() . '/' . $packageName,
-            $this->config->getLogin(),
-            $this->config->getCurrentHost(),
-            $this->config->getToDirectory()
+            $this->getWorkingDirectory() . '/' . $packageName,
+            get_current_user(),
+            $this->getCurrentHost(),
+            $this->get('directory')
         );
 
         $this->shellExec($command);
