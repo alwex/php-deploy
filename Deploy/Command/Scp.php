@@ -36,11 +36,16 @@ class Scp extends AbstractCommand
             $this->input
         );
 
+        $host = $this->get('host');
+        if ($host == null) {
+            $host = $this->getCurrentHost();
+        }
+
         $command = sprintf(
             "scp %s %s@%s:%s",
             $this->getWorkingDirectory() . '/' . $packageName,
             get_current_user(),
-            $this->getCurrentHost(),
+            $host,
             $this->get('destination')
         );
 
