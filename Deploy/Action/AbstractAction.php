@@ -43,7 +43,7 @@ class AbstractAction extends Command
 
                 // merge tasks
                 if (isset($importConfig['tasks'])) {
-                    if (! is_array($configEnv['tasks'])) {
+                    if (! isset($configEnv['tasks'])) {
                         $configEnv['tasks'] = array();
                     }
                     $configEnv['tasks'] += $importConfig['tasks'];
