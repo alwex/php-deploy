@@ -41,6 +41,12 @@ class AbstractAction extends Command
                 $importFile = $locator->locate($resource);
                 $importConfig = Yaml::parse($importFile);
 
+                // merge tasks
+                if (isset($importConfig['tasks'])) {
+                    $configEnv['tasks'] += $importConfig['tasks'];
+                    unset ($importConfig['tasks']);
+                }
+
                 $configEnv = $importConfig + $configEnv;
             }
         }
