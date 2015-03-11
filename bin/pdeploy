@@ -14,7 +14,6 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 
 use Symfony\Component\Console\Application;
 use Deploy\Action\ActionTaskRun;
-use Deploy\Action\ActionTaskRunNew;
 use Deploy\Action\ActionAddEnv;
 use Deploy\Action\ActionInit;
 use Deploy\Action\ActionAddCommand;
@@ -24,7 +23,6 @@ $application = new Application();
 $application->add(new ActionInit());
 $application->add(new ActionAddEnv());
 $application->add(new ActionTaskRun());
-$application->add(new ActionTaskRunNew());
 $application->add(new ActionAddCommand());
 $application->add(new ActionTaskList());
 $application->run();

@@ -19,6 +19,11 @@ class GitExport extends AbstractCommand
      */
     public function run()
     {
+        if ($this->get('vcs') == null) {
+            $class = get_class($this);
+            throw new \InvalidArgumentException("vcs argument is mandatory for $class command, please check you configuration");
+        }
+
         $workingDir = $this->getWorkingDirectory();
 
         // clean working directory

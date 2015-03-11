@@ -21,6 +21,11 @@ class Scp extends AbstractCommand
      */
     public function run()
     {
+        if ($this->get('destination') == null) {
+            $class = get_class($this);
+            throw new \InvalidArgumentException("destination argument is mandatory for $class command, please check you configuration");
+        }
+
         $packageName = NameUtil::generatePackageName(
             $this->getProjectName(),
             $this->input
@@ -36,7 +41,7 @@ class Scp extends AbstractCommand
             $this->getWorkingDirectory() . '/' . $packageName,
             get_current_user(),
             $this->getCurrentHost(),
-            $this->get('directory')
+            $this->get('destination')
         );
 
         $this->shellExec($command);

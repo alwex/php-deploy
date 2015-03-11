@@ -21,6 +21,11 @@ class UnTarGz extends AbstractCommand
      */
     public function run()
     {
+        if ($this->get('destination') == null) {
+            $class = get_class($this);
+            throw new \InvalidArgumentException("destination argument is mandatory for $class command, please check you configuration");
+        }
+
         $packageName = NameUtil::generatePackageName(
             $this->getProjectName(),
             $this->input
@@ -35,7 +40,7 @@ class UnTarGz extends AbstractCommand
             "ssh %s@%s \"cd %s && tar -xzf %s && rm %s\"",
             get_current_user(),
             $this->getCurrentHost(),
-            $this->get('directory'),
+            $this->get('destination'),
             $packageName,
             $packageName
         );

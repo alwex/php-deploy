@@ -21,6 +21,11 @@ class Symlink extends AbstractCommand
      */
     public function run()
     {
+        if ($this->get('destination') == null) {
+            $class = get_class($this);
+            throw new InvalidArgumentException("destination argument is mandatory for $class command, please check you configuration");
+        }
+
         $directoryName = NameUtil::generateDirectoryName(
             $this->getProjectName(),
             $this->input
@@ -31,10 +36,10 @@ class Symlink extends AbstractCommand
             get_current_user(),
             $this->getCurrentHost(),
             // rm previous link
-            $this->get('directory') . '/' . $this->get('symlink'),
+            $this->get('destination') . '/' . $this->get('symlink'),
             // create new link
-            $this->get('directory') . '/' . $directoryName,
-            $this->get('directory') . '/' . $this->get('symlink')
+            $this->get('destination') . '/' . $directoryName,
+            $this->get('destination') . '/' . $this->get('symlink')
         );
 
         $this->shellExec($command);
