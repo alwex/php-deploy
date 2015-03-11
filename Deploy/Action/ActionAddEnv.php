@@ -43,14 +43,14 @@ class ActionAddEnv extends Command
             exec(
                 sprintf(
                     "cp %s %s",
-                    __DIR__ . '/../../templates/env.ini',
-                    $envPath . "/$env.ini"
+                    __DIR__ . '/../../templates/env.yml',
+                    $envPath . "/$env.yml"
                 )
             );
 
 
             $output->writeln("<info>Environment $env added</info>");
-            $output->writeln("<info>Please edit .php-deploy/environments/$env.ini</info>");
+            $output->writeln("<info>Please edit .php-deploy/environments/$env.yml</info>");
 
         } else {
 

@@ -8,7 +8,9 @@
 namespace Deploy;
 
 use Deploy\Util\ArrayUtil;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class Config
 {
