@@ -37,7 +37,9 @@ class CommandFactory
             require_once $commandPath . '/' . $commandName . '.php';
         }
 
-        return new $commandName($config, $input, $output, $command);
+        $command = new $commandName($config, $input, $output, $command);
+
+        return $command;
     }
 
 }

@@ -21,7 +21,7 @@ class MD5CheckSumCreate extends AbstractCommand
     public function run()
     {
         $directoryName = NameUtil::generateDirectoryName(
-            $this->config,
+            $this->getProjectName(),
             $this->input
         );
 
@@ -29,13 +29,13 @@ class MD5CheckSumCreate extends AbstractCommand
 
         $command = sprintf(
             $command,
-            $this->config->getWorkingDirectory() . '/' . $directoryName
+            $this->getWorkingDirectory() . '/' . $directoryName
         );
 
         $this->shellExec($command);
 
         if (!$this->isDry()) {
-            file_put_contents($this->config->getWorkingDirectory() . '/' . $directoryName . '/CHECKSUM.md5', trim($this->commandOutput));
+            file_put_contents($this->getWorkingDirectory() . '/' . $directoryName . '/CHECKSUM.md5', trim($this->commandOutput));
         }
     }
 }

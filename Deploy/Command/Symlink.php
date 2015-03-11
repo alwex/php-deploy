@@ -21,20 +21,25 @@ class Symlink extends AbstractCommand
      */
     public function run()
     {
+        if ($this->get('destination') == null) {
+            $class = get_class($this);
+            throw new InvalidArgumentException("destination argument is mandatory for $class command, please check you configuration");
+        }
+
         $directoryName = NameUtil::generateDirectoryName(
-            $this->config,
+            $this->getProjectName(),
             $this->input
         );
 
         $command = sprintf(
             "ssh %s@%s \"rm %s ; ln -s %s %s\"",
-            $this->config->getLogin(),
-            $this->config->getCurrentHost(),
+            get_current_user(),
+            $this->getCurrentHost(),
             // rm previous link
-            $this->config->getToDirectory() . '/' . $this->config->getSymlink(),
+            $this->get('destination') . '/' . $this->get('symlink'),
             // create new link
-            $this->config->getToDirectory() . '/' . $directoryName,
-            $this->config->getToDirectory() . '/' . $this->config->getSymlink()
+            $this->get('destination') . '/' . $directoryName,
+            $this->get('destination') . '/' . $this->get('symlink')
         );
 
         $this->shellExec($command);

@@ -19,7 +19,12 @@ class GitExport extends AbstractCommand
      */
     public function run()
     {
-        $workingDir = $this->config->getWorkingDirectory();
+        if ($this->get('vcs') == null) {
+            $class = get_class($this);
+            throw new \InvalidArgumentException("vcs argument is mandatory for $class command, please check you configuration");
+        }
+
+        $workingDir = $this->getWorkingDirectory();
 
         // clean working directory
         $command = sprintf("rm -rf %s", $workingDir);
@@ -34,9 +39,9 @@ class GitExport extends AbstractCommand
         $command = sprintf(
             "cd %s && git clone %s %s && cd %s && git checkout -f refs/tags/%s",
             $workingDir,
-            $this->config->getVcs(),
-            $this->config->getProject() . '-' . $this->input->getOption('release'),
-            $this->config->getProject() . '-' . $this->input->getOption('release'),
+            $this->get('vcs'),
+            $this->getProjectName() . '-' . $this->input->getOption('release'),
+            $this->getProjectName() . '-' . $this->input->getOption('release'),
             $this->input->getOption('release')
         );
 
@@ -45,7 +50,7 @@ class GitExport extends AbstractCommand
         // remove .git
         $command = sprintf(
             "cd %s && rm -rf .git",
-            $workingDir . '/' . $this->config->getProject() . '-' . $this->input->getOption('release')
+            $workingDir . '/' . $this->getProjectName() . '-' . $this->input->getOption('release')
         );
 
         $this->shellExec($command);
@@ -54,8 +59,8 @@ class GitExport extends AbstractCommand
     public function afterRun()
     {
         if (!$this->isDry()) {
-            $workingDir = $this->config->getWorkingDirectory();
-            $projectDir = $this->config->getProject() . '-' . $this->input->getOption('release');
+            $workingDir = $this->getWorkingDirectory();
+            $projectDir = $this->getProjectName() . '-' . $this->input->getOption('release');
 
             $fullDir = $workingDir . '/' . $projectDir;
 

@@ -20,16 +20,21 @@ class MD5CheckSumCheck extends AbstractCommand
      */
     public function run()
     {
+        if ($this->get('destination') == null) {
+            $class = get_class($this);
+            throw new \InvalidArgumentException("destination argument is mandatory for $class command, please check you configuration");
+        }
+
         $directoryName = NameUtil::generateDirectoryName(
-            $this->config,
+            $this->getProjectName(),
             $this->input
         );
 
         $command = sprintf(
             'ssh %s@%s "cd %s ; find . ! -name CHECKSUM.md5 -exec md5sum {} + | sort | md5sum"',
-            $this->config->getLogin(),
-            $this->config->getCurrentHost(),
-            $this->config->getToDirectory() . '/' . $directoryName
+            get_current_user(),
+            $this->getCurrentHost(),
+            $this->get('destination') . '/' . $directoryName
         );
 
         $this->shellExec($command);
@@ -38,9 +43,9 @@ class MD5CheckSumCheck extends AbstractCommand
 
         $command = sprintf(
             'ssh %s@%s "cd %s ; cat CHECKSUM.md5"',
-            $this->config->getLogin(),
-            $this->config->getCurrentHost(),
-            $this->config->getToDirectory() . '/' . $directoryName
+            get_current_user(),
+            $this->getCurrentHost(),
+            $this->get('destination') . '/' . $directoryName
         );
 
         $this->shellExec($command);
