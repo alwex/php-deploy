@@ -40,7 +40,7 @@ class ActionTaskRun extends AbstractAction
                 null,
                 InputOption::VALUE_REQUIRED,
                 'The environment configuration to use .php-deploy/environment/{env}.yml file',
-                'dev'
+                getenv('PDEPLOY_ENV') !== false ? getenv("PDEPLOY_ENV"): 'dev'
             )
             ->addOption(
                 'dry',

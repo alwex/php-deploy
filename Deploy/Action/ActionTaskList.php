@@ -15,7 +15,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ActionTaskList extends AbstractAction
 {
-
     protected function configure()
     {
         $this
@@ -26,7 +25,7 @@ class ActionTaskList extends AbstractAction
                 null,
                 InputOption::VALUE_REQUIRED,
                 'The environment configuration to use .php-deploy/environment/{env}.ini file',
-                'dev'
+                getenv('PDEPLOY_ENV') !== false ? getenv("PDEPLOY_ENV"): 'dev'
             );
     }
 
@@ -41,7 +40,6 @@ class ActionTaskList extends AbstractAction
         $tasks = ArrayUtil::getArrayValue($configuration, 'tasks', array());
 
         foreach ($tasks as $taskName => $taskConfiguration) {
-            $output->writeln("");
             $output->writeln("<info>$taskName</info>");
 
             if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
@@ -54,16 +52,12 @@ class ActionTaskList extends AbstractAction
                             reset($commandName);
                             $commandName = key($commandName);
                         }
-
-
                         $formatedCommandName = str_pad($commandName, 0);
-
                         $output->writeln("    $formatedCommandName");
                     }
                 }
+                $output->writeln("");
             }
-
         }
-        $output->writeln("");
     }
 }
