@@ -2,7 +2,7 @@
   "name": "alwex/phpdeploy",
   "description": "full php deployment tool to automate code deployment on multiple hosts/env",
   "require": {
-    "symfony/console": "~2",
+    "symfony/console": "~2.6",
     "symfony/config": "~2.6",
     "symfony/process": "~2.6",
     "symfony/yaml": "~2.6"
