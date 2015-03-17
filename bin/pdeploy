@@ -18,6 +18,7 @@ use Deploy\Action\ActionAddEnv;
 use Deploy\Action\ActionInit;
 use Deploy\Action\ActionAddCommand;
 use Deploy\Action\ActionTaskList;
+use Deploy\Action\ActionEnvList;
 
 $application = new Application();
 $application->add(new ActionInit());
@@ -25,4 +26,5 @@ $application->add(new ActionAddEnv());
 $application->add(new ActionTaskRun());
 $application->add(new ActionAddCommand());
 $application->add(new ActionTaskList());
+$application->add(new ActionEnvList());
 $application->run();
