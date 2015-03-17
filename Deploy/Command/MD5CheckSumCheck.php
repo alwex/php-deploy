@@ -32,7 +32,7 @@ class MD5CheckSumCheck extends AbstractCommand
 
         $command = sprintf(
             'ssh %s@%s "cd %s ; find . ! -name CHECKSUM.md5 -exec md5sum {} + | sort | md5sum"',
-            get_current_user(),
+            exec('whoami'),
             $this->getCurrentHost(),
             $this->get('destination') . '/' . $directoryName
         );
@@ -42,8 +42,7 @@ class MD5CheckSumCheck extends AbstractCommand
         $found = $this->commandOutput;
 
         $command = sprintf(
-            'ssh %s@%s "cd %s ; cat CHECKSUM.md5"',
-            get_current_user(),
+            'ssh %s "cd %s ; cat CHECKSUM.md5"',
             $this->getCurrentHost(),
             $this->get('destination') . '/' . $directoryName
         );

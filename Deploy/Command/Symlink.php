@@ -32,8 +32,7 @@ class Symlink extends AbstractCommand
         );
 
         $command = sprintf(
-            "ssh %s@%s \"rm %s ; ln -s %s %s\"",
-            get_current_user(),
+            "ssh %s \"rm %s ; ln -s %s %s\"",
             $this->getCurrentHost(),
             // rm previous link
             $this->get('destination') . '/' . $this->get('symlink'),

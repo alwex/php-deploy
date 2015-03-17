@@ -42,9 +42,8 @@ class Scp extends AbstractCommand
         }
 
         $command = sprintf(
-            "scp %s %s@%s:%s",
+            "scp %s %s:%s",
             $this->getWorkingDirectory() . '/' . $packageName,
-            get_current_user(),
             $host,
             $this->get('destination')
         );
