@@ -37,8 +37,7 @@ class UnTarGz extends AbstractCommand
         );
 
         $command = sprintf(
-            "ssh %s@%s \"cd %s && tar -xzf %s && rm %s\"",
-            get_current_user(),
+            "ssh %s \"cd %s && tar -xzf %s && rm %s\"",
             $this->getCurrentHost(),
             $this->get('destination'),
             $packageName,
