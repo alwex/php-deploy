@@ -15,15 +15,15 @@ use Symfony\Component\Console\Input\InputInterface;
 class NameUtil
 {
 
-    public static function generatePackageName(Config $config, InputInterface $input)
+    public static function generatePackageName($projectName, InputInterface $input)
     {
-        return self::generateDirectoryName($config, $input)
+        return self::generateDirectoryName($projectName, $input)
         . '.tar.gz';
     }
 
-    public static function generateDirectoryName(Config $config, InputInterface $input)
+    public static function generateDirectoryName($projectName, InputInterface $input)
     {
-        return $config->getProject()
+        return $projectName
         . '-'
         . $input->getOption('release');
     }

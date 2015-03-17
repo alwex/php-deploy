@@ -8,15 +8,15 @@
 namespace Deploy\Action;
 
 use Deploy\Command\CommandFactory;
-use Deploy\Config;
-use Symfony\Component\Console\Command\Command;
+use Deploy\Command\CommandFactoryNew;
+use Deploy\Util\ArrayUtil;
 use Symfony\Component\Console\Helper\DebugFormatterHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActionTaskRun extends Command
+class ActionTaskRun extends AbstractAction
 {
 
     private static $taskStartTag = "<fg=black;bg=white;>";
@@ -39,8 +39,8 @@ class ActionTaskRun extends Command
                 'env',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'The environment configuration to use .php-deploy/environment/{env}.ini file',
-                'dev'
+                'The environment configuration to use .php-deploy/environment/{env}.yml file',
+                getenv('PDEPLOY_ENV') !== false ? getenv("PDEPLOY_ENV"): 'dev'
             )
             ->addOption(
                 'dry',
@@ -51,12 +51,14 @@ class ActionTaskRun extends Command
             ->addArgument(
                 'task',
                 InputArgument::REQUIRED,
-                'The task previously defined in the .php-deploy/environment/{env}.ini file'
-            );
+                'The task previously defined in the .php-deploy/environment/{env}.yml file'
+            )
+            ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $config = $this->loadConfiguration($input, $output);
 
         /* @var $format DebugFormatterHelper */
         $format = $this->getHelperSet()->get('debug_formatter');
@@ -65,17 +67,26 @@ class ActionTaskRun extends Command
             $output->setVerbosity(OutputInterface::VERBOSITY_VERY_VERBOSE);
         }
 
-
-        $configuration = Config::load($input);
         $taskName = $input->getArgument('task');
 
-        if (count($configuration->getPreTaskCommands()) > 0) {
+        $commantList = ArrayUtil::getArrayValue($config['tasks'], $taskName, array());
+        if (empty($commantList)) {
+            throw new \RuntimeException("no command founds for $taskName");
+        }
+
+        $hosts = ArrayUtil::getArrayValue($config, 'hosts', array());
+        $beforeCommands = ArrayUtil::getArrayValue($config['tasks'][$taskName], 'before', array());
+        $preCommands = ArrayUtil::getArrayValue($config['tasks'][$taskName], 'pre', array());
+        $postCommands = ArrayUtil::getArrayValue($config['tasks'][$taskName], 'post', array());
+        $afterCommands = ArrayUtil::getArrayValue($config['tasks'][$taskName], 'after', array());
+
+        if (count($beforeCommands) > 0) {
             $output->writeln(self::$taskStartTag . "  BEFORE $taskName " . self::$taskEndTag);
 
-            foreach ($configuration->getPreTaskCommands() as $commandName) {
-                $command = CommandFactory::create(
-                    $commandName,
-                    $configuration,
+            foreach ($beforeCommands as $commandConfiguration) {
+                $command = CommandFactoryNew::create(
+                    $commandConfiguration,
+                    $config,
                     $input,
                     $output,
                     $this
@@ -85,24 +96,23 @@ class ActionTaskRun extends Command
             }
         }
 
-        if (count($configuration->getOnTaskCommands()) > 0) {
+        if (count($preCommands) > 0) {
             $output->writeln(self::$taskStartTag . "  ON $taskName " . self::$taskEndTag);
-
             // deployment phase on each host
-            foreach ($configuration->getHosts() as $host) {
+            foreach ($hosts as $host) {
 
                 $output->writeln(self::$hostStartTag . "  ON $taskName on $host " . self::$hostEndTag);
 
-                $configuration->setCurrentHost($host);
-
-                foreach ($configuration->getOnTaskCommands() as $commandName) {
-                    $command = CommandFactory::create(
-                        $commandName,
-                        $configuration,
+                foreach ($preCommands as $commandConfiguration) {
+                    $command = CommandFactoryNew::create(
+                        $commandConfiguration,
+                        $config,
                         $input,
                         $output,
                         $this
                     );
+
+                    $command->setCurrentHost($host);
 
                     $command->runCommand();
                 }
@@ -112,39 +122,40 @@ class ActionTaskRun extends Command
 
         // on-deploy
         // on each host after code has been copied
-        if (count($configuration->getPostTaskCommands()) > 0) {
+        if (count($postCommands) > 0) {
             $output->writeln(self::$taskStartTag . "  POST $taskName " . self::$taskEndTag);
 
-            foreach ($configuration->getPostTaskCommands() as $commandName) {
+            foreach ($hosts as $host) {
 
-                foreach ($configuration->getHosts() as $host) {
+                foreach ($postCommands as $commandConfiguration) {
 
                     $output->writeln(self::$hostStartTag . "  POST $taskName on $host " . self::$hostEndTag);
 
-                    $configuration->setCurrentHost($host);
-
-                    $command = CommandFactory::create(
-                        $commandName,
-                        $configuration,
+                    $command = CommandFactoryNew::create(
+                        $commandConfiguration,
+                        $config,
                         $input,
                         $output,
                         $this
                     );
 
+                    $command->setCurrentHost($host);
+
                     $command->runCommand();
                 }
+
             }
         }
 
         // post-release
         // on each host after release has been activated
-        if (count($configuration->getAfterTaskCommands()) > 0) {
+        if (count($afterCommands) > 0) {
             $output->writeln(self::$taskStartTag . "  AFTER $taskName " . self::$taskEndTag);
 
-            foreach ($configuration->getAfterTaskCommands() as $commandName) {
-                $command = CommandFactory::create(
-                    $commandName,
-                    $configuration,
+            foreach ($afterCommands as $commandConfiguration) {
+                $command = CommandFactoryNew::create(
+                    $commandConfiguration,
+                    $config,
                     $input,
                     $output,
                     $this

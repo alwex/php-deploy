@@ -8,7 +8,9 @@
 namespace Deploy;
 
 use Deploy\Util\ArrayUtil;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class Config
 {
@@ -363,7 +365,7 @@ class Config
     {
         $this->login = $login;
         if ($login == '' || $login == null) {
-            $this->login = $current_user = trim(shell_exec('whoami'));
+            $this->login = $current_user = get_current_user();
         }
     }
 

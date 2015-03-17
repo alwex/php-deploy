@@ -20,17 +20,19 @@ class ComposerInstall extends AbstractCommand
     {
         $command = sprintf(
             "cd %s && composer install --optimize-autoloader",
-            $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->input->getOption('release')
+            $this->getWorkingDirectory() . '/' . $this->getProjectName() . '-' . $this->input->getOption('release')
         );
         $this->shellExec($command);
     }
 
     public function afterRun()
     {
-        $dir = $this->config->getWorkingDirectory() . '/' . $this->config->getProject() . '-' . $this->input->getOption('release');
-        $vendorDir = $dir . '/vendor';
-        if (!is_dir($vendorDir)) {
-            throw new \RuntimeException("composer install failed, $vendorDir has not been created");
+        if (!$this->isDry()) {
+            $dir = $this->getWorkingDirectory() . '/' . $this->getProjectName() . '-' . $this->input->getOption('release');
+            $vendorDir = $dir . '/vendor';
+            if (!is_dir($vendorDir)) {
+                throw new \RuntimeException("composer install failed, $vendorDir has not been created");
+            }
         }
     }
 }

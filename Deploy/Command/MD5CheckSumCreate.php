@@ -1,8 +1,8 @@
 <?php
 /**
  * User: aguidet
- * Date: 10/02/15
- * Time: 18:22
+ * Date: 09/03/15
+ * Time: 11:13
  */
 
 namespace Deploy\Command;
@@ -10,9 +10,8 @@ namespace Deploy\Command;
 
 use Deploy\Util\NameUtil;
 
-class TarGz extends AbstractCommand
+class MD5CheckSumCreate extends AbstractCommand
 {
-
     /**
      * execute command and php tasks
      * return the execution status as an integer
@@ -21,23 +20,22 @@ class TarGz extends AbstractCommand
      */
     public function run()
     {
-        $packageName = NameUtil::generatePackageName(
-            $this->getProjectName(),
-            $this->input
-        );
-
         $directoryName = NameUtil::generateDirectoryName(
             $this->getProjectName(),
             $this->input
         );
 
+        $command = 'cd %s ; find . ! -name CHECKSUM.md5 -exec md5sum {} + | sort | md5sum';
+
         $command = sprintf(
-            "cd %s && tar -czf %s %s",
-            $this->getWorkingDirectory(),
-            $packageName,
-            $directoryName
+            $command,
+            $this->getWorkingDirectory() . '/' . $directoryName
         );
 
         $this->shellExec($command);
+
+        if (!$this->isDry()) {
+            file_put_contents($this->getWorkingDirectory() . '/' . $directoryName . '/CHECKSUM.md5', trim($this->commandOutput));
+        }
     }
 }

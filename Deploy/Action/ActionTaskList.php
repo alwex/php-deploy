@@ -8,56 +8,56 @@
 namespace Deploy\Action;
 
 
-use Deploy\Config;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Deploy\Util\ArrayUtil;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ActionTaskList extends Command
+class ActionTaskList extends AbstractAction
 {
-
     protected function configure()
     {
         $this
             ->setName('task:list')
             ->setDescription('List the available tasks for the specified environment')
-
             ->addOption(
                 'env',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'The environment configuration to use .php-deploy/environment/{env}.ini file',
-                'dev'
-            )
-        ;
+                getenv('PDEPLOY_ENV') !== false ? getenv("PDEPLOY_ENV"): 'dev'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $env = $input->getOption('env');
 
-        $configuration = Config::loadEnv($env);
+        $configuration = $this->loadConfiguration($input, $output);
+
+        $env = $input->getOption('env');
         $output->writeln("<comment>Available tasks for $env</comment>");
 
-        foreach ($configuration as $key => $value) {
-            if (is_array($value) && $key != 'hosts') {
-                $output->writeln(" <info>$key</info>");
+        $tasks = ArrayUtil::getArrayValue($configuration, 'tasks', array());
 
-                if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
-                    foreach ($value as $stageName => $commandList) {
-                        foreach ($commandList as $commandName) {
+        foreach ($tasks as $taskName => $taskConfiguration) {
+            $output->writeln("<info>$taskName</info>");
 
-                            $formatedStageName = str_pad($stageName, 10);
-                            $formatedCommandName = str_pad($commandName, 0);
+            if ($output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+                foreach ($taskConfiguration as $stageName => $commandList) {
+                    $output->writeln("  $stageName:");
 
-                            $output->writeln("   $formatedStageName  $formatedCommandName");
+                    foreach ($commandList as $commandName) {
+
+                        if (is_array($commandName)) {
+                            reset($commandName);
+                            $commandName = key($commandName);
                         }
+                        $formatedCommandName = str_pad($commandName, 0);
+                        $output->writeln("    $formatedCommandName");
                     }
                 }
+                $output->writeln("");
             }
-
         }
     }
 }
