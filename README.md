@@ -1,4 +1,7 @@
 # php-deploy
+
+[![Packagist](https://img.shields.io/packagist/dt/alwex/phpdeploy.svg?maxAge=2592000?style=plastic)]()
+
 php-deploy is a full php deployment tool designed to allow very common OR very specific tasks. It's main philosophy is 
 to chain commands as described in a simple configuration file, commands are easily extensible and highly customizable.
 
